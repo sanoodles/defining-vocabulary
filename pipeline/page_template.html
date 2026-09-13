@@ -1,0 +1,833 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portuguese Genericity Levels</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F4F7F7; --surface:#FFFFFF; --surface-2:#EDF2F1;
+  --line:#94A7A6; --line-strong:#6B8D8B;
+  --text:#131F1E; --muted:#344040; --faint:#405452;
+  --accent:#0B5652; --accent-soft:#DCEDEB;
+  --l1:#052E2B; --l2:#0A3F3C; --l3:#10504C; --l4:#19605C; --l5:#24726C; --l6:#31837D; --l7:#43958F;
+  --none:#6B8D8B;
+  --shadow:0 1px 2px rgba(16,40,38,.06),0 6px 18px rgba(16,40,38,.05);
+  /* One page width for the text column and the scatter, so both share an edge. */
+  --page:1600px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0C1413; --surface:#131E1D; --surface-2:#182524;
+    --line:#485F5C; --line-strong:#567672;
+    --text:#E2ECE9; --muted:#BBCCCA; --faint:#9EB3B0;
+    --accent:#42D3BF; --accent-soft:#12312E;
+    --l1:#AFF6F1; --l2:#57E5DB; --l3:#2ACEC4; --l4:#2FB7AE; --l5:#33A29A; --l6:#358C87; --l7:#377A75;
+    --none:#567672;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.28);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0C1413; --surface:#131E1D; --surface-2:#182524;
+  --line:#485F5C; --line-strong:#567672;
+  --text:#E2ECE9; --muted:#BBCCCA; --faint:#9EB3B0;
+  --accent:#42D3BF; --accent-soft:#12312E;
+  --l1:#AFF6F1; --l2:#57E5DB; --l3:#2ACEC4; --l4:#2FB7AE; --l5:#33A29A; --l6:#358C87; --l7:#377A75;
+  --none:#567672;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 18px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px; line-height:1.6; margin:0;
+  padding-block:40px; padding-inline:clamp(20px,2vw,40px);
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{width:100%;max-width:var(--page);margin-inline:auto;display:flex;flex-direction:column;gap:34px}
+.wrap+.wrap{margin-top:34px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+
+/* masthead */
+.masthead{display:flex;flex-direction:column;gap:12px;max-width:70ch}
+.eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{
+  font-family:Newsreader,Georgia,"Times New Roman",serif;
+  font-weight:600; font-size:clamp(30px,5vw,46px); line-height:1.08;
+  margin:0; letter-spacing:-.015em; text-wrap:balance;
+}
+.dek{color:var(--muted);font-size:17px;line-height:1.6;margin:0;text-wrap:pretty}
+.source{color:var(--faint);font-size:14px;line-height:1.6;margin:0}
+
+/* figures */
+.figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.fig{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:5px}
+.fig b{font-family:Newsreader,Georgia,serif;font-weight:600;font-size:30px;line-height:1;letter-spacing:-.01em}
+.fig span{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* strata bar */
+section{display:flex;flex-direction:column;gap:14px}
+.scopebar{display:flex;flex-direction:column;gap:10px}
+/* The bar governs three views spanning more than three screens. Where a viewport has
+   room for it, it follows the reader across exactly that range: .governed is its
+   containing block, so it releases at the end of the browse columns. */
+@media (min-width:1440px) and (min-height:620px){
+  .scopebar{
+    position:sticky; top:0; z-index:4;
+    padding-block:14px; background:var(--bg); border-bottom:1px solid var(--line);
+  }
+  /* Shift-tabbing upwards would otherwise put focus under the stuck bar. */
+  html{scroll-padding-top:220px}
+}
+.sechead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.scopeline{font-size:14px;line-height:1.6;color:var(--faint);margin:0}
+.scopeline b{color:var(--muted);font-weight:500}
+.pill{font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:2px 7px;border-radius:2px;background:var(--surface-2);color:var(--muted)}
+h2{font-family:Newsreader,Georgia,serif;font-weight:600;font-size:23px;margin:0;letter-spacing:-.01em}
+.note{color:var(--muted);font-size:16px;line-height:1.6;margin:0;max-width:74ch;text-wrap:pretty}
+.dist{display:flex;flex-direction:column;gap:4px}
+.row{display:grid;grid-template-columns:38px minmax(0,1fr) 210px;align-items:center;gap:12px}
+.row .k{font-size:14px;font-weight:600}
+.row .track{height:26px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+.row .fill{display:block;height:100%;border-radius:2px;min-width:2px}
+.row .v{font-size:14px;color:var(--muted);white-space:nowrap}
+.row .v b{color:var(--text);font-weight:500}
+.row .tag{font-size:14px;color:var(--faint)}
+@media (max-width:560px){.row{grid-template-columns:30px minmax(0,1fr);row-gap:2px}.row .v{grid-column:2}}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:3px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field>label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.segs{display:flex;flex-wrap:wrap;gap:5px}
+.segs button{
+  font:inherit;font-size:15px;padding:10px 14px;min-height:44px;border-radius:2px;cursor:pointer;
+  background:var(--surface-2);color:var(--muted);border:1px solid transparent;transition:background .12s,color .12s;
+}
+.segs button:hover{color:var(--text)}
+.segs button[aria-pressed="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+:root[data-theme="dark"] .segs button[aria-pressed="true"],
+:root:not([data-theme="light"]) .segs button[aria-pressed="true"]{color:#04211F}
+input[type="search"]{
+  font:inherit;font-size:16px;padding:10px 12px;min-height:44px;border-radius:2px;width:230px;max-width:100%;
+  background:var(--surface-2);color:var(--text);border:1px solid var(--line-strong);
+}
+input[type="search"]::placeholder{color:var(--faint)}
+@media (max-width:700px){
+  .controls{gap:14px;padding:14px}
+  .field{flex:1 1 100%}
+  input[type="search"]{width:100%}
+}
+:is(button,input,a):focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* lookup callout */
+.hit{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 16px;padding:13px 16px;border-radius:3px;background:var(--accent-soft);border:1px solid var(--line)}
+.hit .w{font-family:Newsreader,Georgia,serif;font-size:25px;font-weight:600}
+.hit dl{display:flex;flex-wrap:wrap;gap:10px 18px;margin:0;font-size:15px;line-height:1.6}
+.hit dt{color:var(--muted);display:inline}
+.hit dd{margin:0 0 0 5px;display:inline;font-weight:500}
+
+/* columns */
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;align-items:start}
+.col{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:3px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.col>header{padding:9px 11px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.col .stripe{height:5px}
+.col .lvl{font-size:14px;font-weight:600;letter-spacing:.02em}
+.col .cnt{font-size:13px;color:var(--muted)}
+.col ol{list-style:none;margin:0;padding:5px;max-height:470px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:1px}
+.col li{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 7px;padding:5px 6px;border-radius:2px;font-size:15px;line-height:1.5}
+.col li:nth-child(odd){background:var(--surface-2)}
+.col li.on{background:var(--accent);color:var(--bg)}
+:root[data-theme="dark"] .col li.on,:root:not([data-theme="light"]) .col li.on{color:#04211F}
+.col li .r{font-size:13px;color:var(--faint);flex:none;margin-left:auto}
+.col li>span:not(.r){min-width:0;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto}
+.col li.on .r{color:inherit;opacity:.75}
+.col .empty{padding:12px 11px;font-size:14px;color:var(--faint)}
+@media (max-width:700px){
+  .cols{display:flex;overflow-x:auto;scroll-snap-type:x proximity;
+    overscroll-behavior-x:contain;padding-bottom:6px}
+  .col{flex:0 0 min(76%,280px);scroll-snap-align:start}
+  .col ol{max-height:380px;max-height:min(56svh,380px)}
+}
+
+/* explainer tables and lists */
+.tblwrap{overflow-x:auto;max-width:100%}
+.tbl{border-collapse:separate;border-spacing:0;font-size:15px;line-height:1.55;
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  min-width:520px;max-width:min(100%,104ch)}
+.tbl caption{caption-side:top;text-align:left;font-size:14px;color:var(--faint);padding-bottom:7px}
+.tbl th,.tbl td{padding:10px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.tbl tbody tr:last-child>*{border-bottom:0}
+.tbl thead th{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);
+  font-weight:600;background:var(--surface-2)}
+.tbl td{color:var(--muted)}
+.tbl td:first-child{color:var(--text);font-weight:500}
+.tbl tfoot td{border-top:1px solid var(--line);border-bottom:0;color:var(--text);font-weight:600}
+.tbl .src{display:block;font-size:13px;color:var(--faint);font-weight:400;margin-top:3px}
+.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;max-width:74ch}
+.steps li{color:var(--muted);font-size:16px;line-height:1.6;padding-left:3px}
+.steps li b{color:var(--text);font-weight:600}
+h3{font-family:Newsreader,Georgia,serif;font-weight:600;font-size:19px;margin:8px 0 0;letter-spacing:-.005em}
+code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surface-2);padding:1px 5px;border-radius:2px}
+
+/* method */
+.method{border-top:1px solid var(--line);padding-top:22px;display:flex;flex-direction:column;gap:12px}
+.method p{margin:0;font-size:16px;line-height:1.65;color:var(--muted);max-width:74ch;text-wrap:pretty}
+.method b{color:var(--text);font-weight:600}
+/* scatter */
+.chartsec{padding:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.chartsec .inner{width:min(100%,var(--page));display:flex;flex-direction:column;gap:12px}
+.chartsec h2{margin:0}
+.chartwrap{
+  position:relative;width:100%;height:min(90vh,calc(100vh - 240px));min-height:420px;
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;overflow:hidden;
+}
+
+.chartwrap canvas{display:block;width:100%;height:100%;cursor:crosshair;touch-action:pan-y}
+@media (max-width:700px){
+  .chartwrap{height:min(62vh,460px);height:min(62svh,460px);min-height:300px}
+}
+.chartbox{display:flex;flex-direction:column;gap:8px}
+.chartbox:fullscreen{background:var(--bg);padding:12px;gap:8px}
+.chartbox:fullscreen .chartwrap{flex:1;height:auto;min-height:0}
+.chartbar{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.chartbar button{font:inherit;font-size:15px;padding:10px 14px;min-height:44px;border-radius:2px;cursor:pointer;
+  background:var(--surface-2);color:var(--muted);border:1px solid transparent}
+.chartbar button:hover{color:var(--text)}
+@media (max-width:700px){
+  .chartbar{justify-content:flex-start}
+  .chartbar button{flex:1 1 auto}
+}
+.chartbar button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+:root[data-theme="dark"] .chartbar button[aria-pressed="true"],
+:root:not([data-theme="light"]) .chartbar button[aria-pressed="true"]{color:#04211F}
+.tip{
+  position:absolute;pointer-events:none;z-index:3;padding:7px 10px;border-radius:3px;
+  background:var(--text);color:var(--bg);font-size:14px;line-height:1.5;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(0,0,0,.22);opacity:0;transition:opacity .08s;
+}
+.tip b{font-family:Newsreader,Georgia,serif;font-size:17px;font-weight:600}
+.zoomhint{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;
+  pointer-events:none;opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s}
+.zoomhint.on{opacity:1;visibility:visible}
+.zoomhint span{background:var(--text);color:var(--bg);padding:10px 16px;border-radius:3px;
+  font-size:16px;line-height:1.5;box-shadow:0 4px 14px rgba(0,0,0,.22)}
+.tip .m{opacity:.72;font-family:"IBM Plex Mono",monospace}
+.hint{font-size:14px;line-height:1.6;color:var(--faint);margin:0;text-align:center}
+.hint kbd{font-family:"IBM Plex Mono",monospace;font-size:13px;background:var(--surface-2);
+  border:1px solid var(--line);border-radius:2px;padding:0 4px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">eigenlex · feat/genericity · prototype</p>
+    <h1>Portuguese Genericity Levels</h1>
+    <p class="dek">Every indexed Portuguese word placed on a seven-step scale from most generic to most specific, worked out from which words the Portuguese Wiktionary uses to define other words.</p>
+    <p class="source mono">401,248 Wiktionary entries → 24,108 matched to the word list → 308,680 links → 22,824 words with a level</p>
+  </header>
+
+  <div class="figures">
+    <div class="fig"><b>7</b><span>levels, holding 0.2% to 38.7% of the words that have one</span></div>
+    <div class="fig"><b>13.5</b><span>definitions the average word is used in</span></div>
+    <div class="fig"><b>−0.59</b><span>correlation with log frequency rank: related, not redundant</span></div>
+    <div class="fig"><b>64%</b><span>of the 35,827-word list has a level</span></div>
+  </div>
+
+  <section id="how">
+    <h2>Where the two numbers come from</h2>
+    <p class="note">Every word on this page carries two numbers. They come from different sources, they are
+      worked out in different ways, and neither one knows about the other. That is the point of the page: if
+      genericity were a restatement of frequency there would be nothing here to add.</p>
+
+    <div class="tblwrap">
+      <table class="tbl">
+        <caption>The four inputs. Only the second is new — the rest already build the app.</caption>
+        <thead><tr><th>Source</th><th>What it holds</th><th>What it is used for</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Portuguese subtitle counts<span class="src mono">freq-pt.txt · OpenSubtitles 2018, via hermitdave/FrequencyWords</span></td>
+            <td>How many times each word appears in the subtitles of film and television</td>
+            <td>The frequency rank, and so the CEFR band</td>
+          </tr>
+          <tr>
+            <td>The Portuguese Wiktionary<span class="src mono">pt.jsonl · kaikki.org extract, 401,248 entries, 339 MB</span></td>
+            <td>Every entry's definitions, as plain text</td>
+            <td>The genericity level, and nothing else</td>
+          </tr>
+          <tr>
+            <td>Lemma list<span class="src mono">lemma-pt.txt · michmech/lemmatization-lists</span></td>
+            <td>Which base word each inflected form belongs to</td>
+            <td>Both numbers — merging counts onto the base word, and matching the words inside a definition</td>
+          </tr>
+          <tr>
+            <td>Casing counts and a name list<span class="src mono">casing-pt.txt · Leipzig Corpora · names.txt</span></td>
+            <td>How a word is written mid-sentence, and which words are personal names</td>
+            <td>Cleaning the word list, before either number is worked out</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>How the frequency rank is worked out</h3>
+    <p class="note">It is a count of how often people say the word, and nothing else. Nobody judged any word
+      to be easy or hard at any point.</p>
+    <ol class="steps">
+      <li><b>Count</b> every word in the subtitles.</li>
+      <li><b>Merge inflections onto the base word</b>, so <span lang="pt">falo</span>,
+        <span lang="pt">falas</span> and <span lang="pt">falou</span> all count towards
+        <span lang="pt">falar</span> and the verb is ranked once rather than forty times.</li>
+      <li><b>Merge the pronoun back</b> where Portuguese hyphenates one onto a verb:
+        <span lang="pt">deixa-me</span> is not a word of its own, so its count goes to
+        <span lang="pt">deixar</span>. This is a quarter of the raw Portuguese list.</li>
+      <li><b>Drop what is not vocabulary</b> — anything under 10 occurrences, 1,737 personal names, and past
+        rank 25,000 anything the lemma list does not recognise, which is where the subtitle tail turns into
+        names, untranslated English and scanning debris.</li>
+      <li><b>Sort by the count.</b> Rank 1 is the commonest word, <span lang="pt">o</span>; rank 35,827 is the
+        last one left.</li>
+    </ol>
+    <p class="note">The CEFR band is then a threshold on that rank — A1 is 1–1,000, A2 to 3,000, B1 to 6,000,
+      B2 to 12,000, C1 to 25,000, C2 to 50,000. The thresholds were fitted once against CEFR-J in English and
+      are reused for every language unchanged.</p>
+
+    <h3>How the genericity level is worked out</h3>
+    <p class="note">Genericity asks a different question: <b>how much of the dictionary leans on this word?</b>
+      A word is generic when the dictionary needs it in order to explain other words.</p>
+    <p class="note">Read every Portuguese Wiktionary definition as a set of links.
+      <span lang="pt">água</span> appears in the definition of <span lang="pt">chuva</span>, so there is a link
+      <code>água → chuva</code>. Definitions that only name an inflection
+      (<i lang="pt">terceira pessoa do singular…</i>) are thrown away, because they explain nothing. That
+      leaves 22,824 words joined by 308,680 links.</p>
+    <p class="note">Then peel the whole thing in rounds. <b>Round 1</b> removes every word used in no
+      definition at all. <b>Round 2</b> removes every word now used in fewer than 2 definitions,
+      <b>round 3</b> every word used in fewer than 3, and so on until nothing is left. Removing a word takes
+      its links with it, so each round pushes more words under the next round's bar. A word's level is the
+      round it falls in: out in round 1 is L7, still standing in round 7 is L1.</p>
+    <p class="note">The rounds are the whole idea. A plain count of uses would rate a word used by a hundred
+      dead ends as highly as one used by a hundred words the dictionary itself needs.
+      <b>Who uses you counts for more than how many do.</b></p>
+
+    <h3>A worked example</h3>
+    <p class="note"><span lang="pt">igual</span> (“equal”) and <span lang="pt">porco</span> (“pig”) are each
+      used in exactly 67 definitions. They finish three levels apart.</p>
+    <div class="tblwrap">
+      <table class="tbl">
+        <caption>Words still using each one when the round starts.</caption>
+        <thead><tr><th>Round</th><th>Removes a word used in fewer than</th>
+          <th lang="pt">igual</th><th lang="pt">porco</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>1 definition</td><td class="mono">67</td><td class="mono">67</td></tr>
+          <tr><td>2</td><td>2 definitions</td><td class="mono">55</td><td class="mono">32</td></tr>
+          <tr><td>3</td><td>3 definitions</td><td class="mono">40</td><td><span class="mono">12</span> — falls to 2, out</td></tr>
+          <tr><td>4</td><td>4 definitions</td><td class="mono">28</td><td>—</td></tr>
+          <tr><td>5</td><td>5 definitions</td><td class="mono">17</td><td>—</td></tr>
+          <tr><td>6</td><td>6 definitions</td><td><span class="mono">7</span> — falls to 5, out</td><td>—</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Level</td><td>L2</td><td>L5</td></tr></tfoot>
+      </table>
+    </div>
+    <p class="note"><span lang="pt">porco</span> is used only by words more specific than itself —
+      <span lang="pt">presunto</span>, <span lang="pt">javali</span>, <span lang="pt">toucinho</span>,
+      <span lang="pt">leitão</span>, <span lang="pt">pocilga</span>. Fifty-five of its 67 users are already
+      gone when round 3 starts, round 3 removes ten more, and two is fewer than three, so
+      <span lang="pt">porco</span> falls in that same round. <span lang="pt">igual</span> is used at every
+      level, including by <span lang="pt">valor</span>, <span lang="pt">diferente</span>,
+      <span lang="pt">semelhante</span> and <span lang="pt">comparar</span> — words the dictionary needs in
+      turn, so they stay, and they hold <span lang="pt">igual</span> up until round 6. Type either word into
+      <b>Find a word</b> above.</p>
+    <p class="note">The formal name for the rounds is the <b>out-degree <i>k</i>-core decomposition</b>, and a
+      word's level is its core number: L1 is core 6, L7 is core 0. Words inside a definition are matched to
+      the word list through <code>forms.pt.json</code>, the same form-to-base-word map the app already
+      ships.</p>
+  </section>
+
+</div>
+
+<div class="wrap governed">
+  <div class="scopebar">
+    <p class="eyebrow">Scope — applies to the distribution, the scatter and the browse columns</p>
+    <div class="controls">
+      <div class="field">
+        <label id="setlab">Word set</label>
+        <div class="segs" id="set" role="group" aria-labelledby="setlab"></div>
+      </div>
+      <div class="field">
+        <label id="winlab">Frequency window</label>
+        <div class="segs" id="win" role="group" aria-labelledby="winlab"></div>
+      </div>
+      <div class="field">
+        <label for="q">Find a word</label>
+        <input type="search" id="q" placeholder="e.g. pagamento" autocomplete="off" spellcheck="false">
+      </div>
+    </div>
+    <div id="hit"></div>
+  </div>
+
+  <section>
+    <h2>The distribution</h2>
+    <p class="note">Each step roughly doubles — the same shape <code>BAND-1</code> already uses for CEFR, and seven tabs fit the existing band row without bucketing. Narrow the frequency window and watch the shape migrate: the head of the word list leans generic, the tail piles into L7.</p>
+    <p class="note"><b>Content words only</b> hides the 218 closed-class words and 18 metalanguage terms, which is where L1's <code>o que a de um</code> live. It filters the display; the levels themselves are unchanged, because restricting the graph costs two levels of resolution and reorders nothing.</p>
+    <p class="scopeline" id="scope"></p>
+    <div class="dist" id="dist"></div>
+  </section>
+
+  <section class="chartsec">
+    <div class="inner">
+      <h2>Frequency against genericity</h2>
+      <p class="note">One point per word that has a level. A search dims the rest rather than hiding it, so a match keeps its context.</p>
+      <p class="note">Jitter within each level is hashed from the word, so points never move between renders; the level itself is one of seven. The axis is square-root rather than log, which happens to give each CEFR band — the vertical stripes — a roughly equal share of the width.</p>
+      <div class="chartbox" id="cbox">
+        <div class="chartbar">
+          <button type="button" id="btnUn" aria-pressed="false">Show words with no level</button>
+          <button type="button" id="btnReset">Reset view</button>
+          <button type="button" id="btnFs">Full screen</button>
+        </div>
+        <div class="chartwrap" id="cw">
+          <canvas id="cv"></canvas>
+          <div class="tip" id="tip"></div>
+          <div class="zoomhint" id="zh" aria-hidden="true"></div>
+        </div>
+      </div>
+      <p class="hint" id="hint"><kbd>ctrl</kbd>/<kbd>⌘</kbd>+<kbd>wheel</kbd> zoom · <kbd>drag</kbd> pan · <kbd>shift</kbd>+drag box zoom · <kbd>double-click</kbd> reset · hover a point for the word</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Browse</h2>
+    <p class="note">At ranks 2,001–6,000, <b>pagamento</b> sits at L3 and <b>uau</b> at L7 — eight ranks apart in the word list, four levels apart here. That gap is the whole case for a third view.</p>
+    <div class="cols" id="cols" lang="pt"></div>
+  </section>
+</div>
+
+<div class="wrap">
+  <div class="method">
+    <h2>What to watch for</h2>
+    <p><b>Read it as generic → specific, never easy → hard.</b> <code>olá</code>, <code>uau</code> and <code>obrigado</code> are beginner words that sit at L7, because nothing is defined in terms of "hello". The measure is doing its job; the label has to say so.</p>
+    <p><b>The uncovered third</b> is 13,003 words. 1,191 are inflection-only Wiktionary entries that could inherit their base word's level. The remaining 11,754 have no Wiktionary entry at all and read, in frequency order, <code>cincar miudar john jack dessar sam farar mr michael charlie</code> — largely names and debris that the name list and <code>dictGate</code> already missed, so this doubles as a quality probe on the existing word list.</p>
+  </div>
+</div>
+
+<script type="application/json" id="data">__DATA__</script>
+<script>
+var D=JSON.parse(document.getElementById("data").textContent);
+(function(){
+  var WORDS=D.words, C=D.cores, P=D.pos, N=WORDS.length;
+  var LV=["L1","L2","L3","L4","L5","L6","L7"];
+  var TAG=["most generic","","","","","","most specific"];
+  var CEFR=[[1000,"A1"],[3000,"A2"],[6000,"B1"],[12000,"B2"],[25000,"C1"],[50000,"C2"]];
+  function cefr(r){for(var i=0;i<CEFR.length;i++)if(r<=CEFR[i][0])return CEFR[i][1];return "rare";}
+  function lev(i){var c=C[i];return c==="-"?7:6-(+c);}
+  var KIND={c:"content word",f:"function word",m:"dictionary metalanguage","?":"no Wiktionary entry"};
+
+  var colorOf=function(l){return l===7?"var(--none)":"var(--l"+(l+1)+")";};
+
+  var SETS=[["All words",function(){return true;}],
+            ["Content words only",function(i){return P[i]==="c";}]];
+  var WINS=[["All words",1,N],["1–1,000",1,1000],["1,001–3,000",1001,3000],
+            ["2,001–6,000",2001,6000],["6,001–12,000",6001,12000],
+            ["12,001–25,000",12001,25000],["25,001+",25001,N]];
+  var set=0,win=0,q="";
+
+  function segs(host,items,get,onpick){
+    items.forEach(function(it,i){
+      var b=document.createElement("button");
+      b.type="button";b.textContent=it[0];
+      b.setAttribute("aria-pressed",i===get()?"true":"false");
+      b.onclick=function(){
+        onpick(i);
+        [].forEach.call(host.children,function(c,j){c.setAttribute("aria-pressed",j===i?"true":"false");});
+        render();
+      };
+      host.appendChild(b);
+    });
+  }
+  segs(document.getElementById("set"),SETS,function(){return set;},function(i){set=i;});
+  segs(document.getElementById("win"),WINS,function(){return win;},function(i){win=i;});
+
+  var dist=document.getElementById("dist"),cols=document.getElementById("cols"),
+      hitEl=document.getElementById("hit"),qEl=document.getElementById("q"),CAP=400;
+  qEl.addEventListener("input",function(){q=qEl.value.trim().toLowerCase();render();});
+
+  function render(){
+    var inSet=SETS[set][1];
+
+    var lo=WINS[win][1],hi=WINS[win][2];
+
+    // distribution — scoped by both the word set and the frequency window
+    var TOT=[0,0,0,0,0,0,0,0],inScope=0,unmatched=0;
+    for(var i=lo-1;i<hi&&i<N;i++){
+      if(!inSet(i))continue;
+      if(q&&WORDS[i].toLowerCase().indexOf(q)===-1){unmatched++;continue;}
+      inScope++; TOT[lev(i)]++;
+    }
+    var levelled=0,peak=0;
+    for(var l=0;l<7;l++){levelled+=TOT[l];if(TOT[l]>peak)peak=TOT[l];}
+    dist.innerHTML="";
+    for(var l=0;l<7;l++){
+      var pc=levelled?TOT[l]/levelled*100:0;
+      var r=document.createElement("div");r.className="row";
+      r.innerHTML='<span class="k">'+LV[l]+'</span>'+
+        '<span class="track">'+(TOT[l]?'<span class="fill" style="width:'+Math.max(TOT[l]/peak*100,0.6)+'%;background:'+colorOf(l)+'"></span>':'')+'</span>'+
+        '<span class="v"><b class="mono">'+TOT[l].toLocaleString()+'</b> · '+pc.toFixed(1)+'%'+
+        (TAG[l]?' <span class="tag">'+TAG[l]+'</span>':'')+'</span>';
+      dist.appendChild(r);
+    }
+    var where=(win===0?"the whole list":"ranks "+WINS[win][0]);
+    document.getElementById("scope").innerHTML= q
+      ? '<b class="mono">'+levelled.toLocaleString()+'</b> of <b class="mono">'+inScope.toLocaleString()+
+        '</b> '+(set===1?"content words":"words")+' matching \u201c'+q.replace(/</g,"&lt;")+
+        '\u201d in '+where+' carry a level'+(TOT[7]?", and "+TOT[7].toLocaleString()+" do not":"")+
+        '. Shares are of the words that have one.'
+      : '<b class="mono">'+levelled.toLocaleString()+'</b> of <b class="mono">'+inScope.toLocaleString()+
+        '</b> '+(set===1?"content words":"words")+" in "+where+
+        " carry a level"+(TOT[7]?", and "+TOT[7].toLocaleString()+" do not":"")+
+        ". Shares are of the words that have one.";
+
+    // columns — same scope, plus the search
+    var buckets=[[],[],[],[],[],[],[],[]],counts=[0,0,0,0,0,0,0,0];
+    for(var i=lo-1;i<hi&&i<N;i++){
+      if(!inSet(i))continue;
+      var w=WORDS[i];
+      if(q&&w.toLowerCase().indexOf(q)===-1)continue;
+      var l2=lev(i);counts[l2]++;
+      if(buckets[l2].length<CAP)buckets[l2].push([w,i+1]);
+    }
+
+    hitEl.innerHTML="";
+    if(q){
+      var idx=-1;
+      for(var j=0;j<N;j++)if(WORDS[j].toLowerCase()===q){idx=j;break;}
+      if(idx>=0){
+        var lh=lev(idx),rk=idx+1,cls=P[idx];
+        var box=document.createElement("div");box.className="hit";
+        box.innerHTML='<span class="w" lang="pt">'+WORDS[idx]+'</span>'+
+          '<span class="pill">'+KIND[cls]+'</span><dl>'+
+          '<div><dt>Genericity</dt><dd>'+(lh===7?"no level":LV[lh]+(TAG[lh]?" · "+TAG[lh]:""))+'</dd></div>'+
+          '<div><dt>Frequency rank</dt><dd class="mono">'+rk.toLocaleString()+'</dd></div>'+
+          '<div><dt>CEFR</dt><dd>'+cefr(rk)+'</dd></div></dl>'+
+          (set===1&&cls!=="c"?'<span class="tag">hidden by the current word set</span>':'');
+        hitEl.appendChild(box);
+      }
+    }
+
+    cols.innerHTML="";
+    for(var l=0;l<8;l++){
+      var c=document.createElement("div");c.className="col";
+      var name=l===7?"No level":LV[l];
+      var sub=l===7?"no usable definition":(TAG[l]||"");
+      var head='<div class="stripe" style="background:'+colorOf(l)+'"></div>'+
+        '<header><span class="lvl">'+name+'</span><span class="cnt mono">'+counts[l].toLocaleString()+
+        (sub?'</span><span class="cnt">'+sub:'')+'</span></header>';
+      var body=buckets[l].length
+        ? '<ol>'+buckets[l].map(function(p){
+            var on=q&&p[0].toLowerCase()===q?' class="on"':'';
+            return '<li'+on+'><span>'+p[0]+'</span><span class="r mono">'+p[1].toLocaleString()+'</span></li>';
+          }).join("")+'</ol>'
+        : '<p class="empty">none in this window</p>';
+      c.innerHTML=head+body;cols.appendChild(c);
+    }
+    if(window.__scope)window.__scope(set,win,q,WINS);
+  }
+  window.__syncScope=render;
+  render();
+})();
+</script>
+<script>
+(function(){
+  var WORDS=D.words, C=D.cores, P=D.pos, N=WORDS.length;
+  var cw=document.getElementById("cw"), cv=document.getElementById("cv"),
+      ctx=cv.getContext("2d"), tip=document.getElementById("tip");
+  var LV=["L1","L2","L3","L4","L5","L6","L7","none"];
+  var CEFR=[[1,1000,"A1"],[1001,3000,"A2"],[3001,6000,"B1"],[6001,12000,"B2"],
+            [12001,25000,"C1"],[25001,50000,"C2"]];
+
+  // Stable jitter: hashed from the word, so a point never moves between renders.
+  function hash(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0)%100000/100000;}
+  var PX=new Float32Array(N), PY=new Float32Array(N), LVL=new Uint8Array(N);
+  for(var i=0;i<N;i++){
+    PX[i]=Math.sqrt(i+1);
+    var c=C[i]; LVL[i]=c==="-"?7:6-(+c);
+    PY[i]=LVL[i]+0.14+hash(WORDS[i])*0.72;
+  }
+  var byLevel=[[],[],[],[],[],[],[],[]];
+  for(var i=0;i<N;i++)byLevel[LVL[i]].push(i);   // already sorted by PX: rank order
+
+  var XMAX=PX[N-1], showUn=false, set=0, query="";
+  var PAD={l:60,r:18,t:30,b:44};
+  var V={x0:0,x1:XMAX,y0:0,y1:7};
+  function yTop(){return 0;} function yBot(){return showUn?8:7;}
+
+  var W=0,H=0,dpr=1,narrow=false;
+  function resize(){
+    var r=cw.getBoundingClientRect();
+    dpr=Math.min(window.devicePixelRatio||1,2);
+    W=Math.max(1,Math.round(r.width)); H=Math.max(1,Math.round(r.height));
+    narrow=W<460; PAD.l=narrow?50:60; PAD.r=narrow?12:18;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+  function pw(){return Math.max(1,W-PAD.l-PAD.r);} function ph(){return Math.max(1,H-PAD.t-PAD.b);}
+  function sx(x){return PAD.l+(x-V.x0)/(V.x1-V.x0)*pw();}
+  function sy(y){return PAD.t+(y-V.y0)/(V.y1-V.y0)*ph();}
+  function dx(px){return V.x0+(px-PAD.l)/pw()*(V.x1-V.x0);}
+  function dy(py){return V.y0+(py-PAD.t)/ph()*(V.y1-V.y0);}
+  function cssvar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+
+  function clampView(){
+    var w=Math.min(V.x1-V.x0,XMAX), h=Math.min(V.y1-V.y0,yBot()-yTop());
+    if(w<XMAX/3000)w=XMAX/3000; if(h<0.05)h=0.05;
+    if(V.x0<0)V.x0=0; if(V.x0+w>XMAX)V.x0=XMAX-w; V.x1=V.x0+w;
+    if(V.y0<yTop())V.y0=yTop(); if(V.y0+h>yBot())V.y0=yBot()-h; V.y1=V.y0+h;
+  }
+
+  function visible(i){
+    if(set===1&&P[i]!=="c")return false;
+    if(LVL[i]===7&&!showUn)return false;
+    return true;
+  }
+
+  function draw(){
+    var bg=cssvar("--surface"),line=cssvar("--line"),text=cssvar("--text"),
+        muted=cssvar("--muted"),faint=cssvar("--faint"),accent=cssvar("--accent"),s2=cssvar("--surface-2");
+    ctx.clearRect(0,0,W,H); ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+    ctx.save(); ctx.beginPath(); ctx.rect(PAD.l,PAD.t,pw(),ph()); ctx.clip();
+
+    // CEFR bands as alternating vertical stripes
+    ctx.font='13px "IBM Plex Sans",system-ui,sans-serif'; ctx.textAlign="center";
+    for(var b=0;b<CEFR.length;b++){
+      var a=sx(Math.sqrt(CEFR[b][0])),z=sx(Math.sqrt(Math.min(CEFR[b][1],N)));
+      if(b%2===0){ctx.fillStyle=s2;ctx.globalAlpha=.55;ctx.fillRect(a,PAD.t,z-a,ph());ctx.globalAlpha=1;}
+      if(z-a>22){ctx.fillStyle=faint;ctx.fillText(CEFR[b][2],(a+z)/2,PAD.t+13);}
+    }
+    // band separators
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    for(var l=0;l<=yBot();l++){
+      var y=Math.round(sy(l))+.5;
+      if(y<PAD.t-1||y>PAD.t+ph()+1)continue;
+      ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(PAD.l+pw(),y);ctx.stroke();
+    }
+    // points
+    function inView(i){return PX[i]>=V.x0&&PX[i]<=V.x1&&PY[i]>=V.y0&&PY[i]<=V.y1;}
+    var vis=0,hits=0;
+    for(var i=0;i<N;i++){
+      if(!visible(i)||!inView(i))continue;
+      vis++;
+      if(query&&WORDS[i].toLowerCase().indexOf(query)!==-1)hits++;
+    }
+    var alpha=Math.min(.92,Math.max(.30,75/Math.sqrt(Math.max(vis,1))));
+    var r=Math.min(3.8,Math.max(1.35,pw()/((V.x1-V.x0)/XMAX*2400)));
+    var useArc=r>2.0, d=Math.max(1.4,r*1.8);
+    ctx.fillStyle=text; ctx.globalAlpha=query?alpha*0.20:alpha;
+    for(var i=0;i<N;i++){
+      if(!visible(i)||!inView(i))continue;
+      if(query&&WORDS[i].toLowerCase().indexOf(query)!==-1)continue;
+      var X=sx(PX[i]),Y=sy(PY[i]);
+      if(useArc){ctx.beginPath();ctx.arc(X,Y,r,0,6.283);ctx.fill();}
+      else ctx.fillRect(X-d/2,Y-d/2,d,d);
+    }
+    ctx.globalAlpha=1;
+    if(query){
+      ctx.fillStyle=accent;
+      for(var i=0;i<N;i++){
+        if(!visible(i)||!inView(i))continue;
+        if(WORDS[i].toLowerCase().indexOf(query)===-1)continue;
+        var X=sx(PX[i]),Y=sy(PY[i]);
+        ctx.beginPath();ctx.arc(X,Y,Math.max(3.4,r+1.8),0,6.283);ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    // Y axis: level labels with their ramp swatch
+    ctx.textAlign="right"; ctx.font='600 '+(narrow?12:13)+'px "IBM Plex Sans",system-ui,sans-serif';
+    var sw=narrow?9:11;
+    for(var l=0;l<yBot();l++){
+      var y=sy(l+.5); if(y<PAD.t-6||y>PAD.t+ph()+6)continue;
+      ctx.fillStyle=l===7?cssvar("--none"):cssvar("--l"+(l+1));
+      ctx.fillRect(PAD.l-sw-6,y-sw/2,sw,sw);
+      ctx.fillStyle=muted; ctx.fillText(LV[l],PAD.l-sw-13,y+(narrow?4:5));
+    }
+    // X axis ticks
+    ctx.textAlign="center"; ctx.font=(narrow?12:13)+'px "IBM Plex Mono",monospace'; ctx.fillStyle=muted;
+    var ticks=[1,10,100,1000,3000,6000,12000,25000,35000];
+    var last=-1e9;
+    for(var t=0;t<ticks.length;t++){
+      if(ticks[t]>N)continue;
+      var X=sx(Math.sqrt(ticks[t])), lab=ticks[t].toLocaleString(), lw=ctx.measureText(lab).width;
+      if(X<PAD.l-2||X>PAD.l+pw()+2||X-last<(narrow?40:44))continue;
+      if(X-lw/2<1||X+lw/2>W-1)continue;
+      last=X;
+      ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(X,PAD.t+ph());ctx.lineTo(X,PAD.t+ph()+4);ctx.stroke();
+      ctx.fillText(lab,X,PAD.t+ph()+19);
+    }
+    ctx.font='13px "IBM Plex Sans",system-ui,sans-serif'; ctx.fillStyle=faint;
+    ctx.fillText("frequency rank",PAD.l+pw()/2,PAD.t+ph()+37);
+    // count
+    ctx.textAlign="left"; ctx.fillStyle=faint;
+    ctx.fillText(query
+      ? hits.toLocaleString()+" of "+vis.toLocaleString()+" in view match \u201c"+query+"\u201d"
+      : vis.toLocaleString()+" words in view", PAD.l+4, PAD.t-11);
+    if(box){ctx.strokeStyle=accent;ctx.lineWidth=1;ctx.setLineDash([4,3]);
+      ctx.strokeRect(box.x0,box.y0,box.x1-box.x0,box.y1-box.y0);ctx.setLineDash([]);}
+  }
+
+  // ---- interaction ----
+  var drag=null, box=null;
+  var zh=document.getElementById("zh"), zhTimer=0;
+  var ZKEY=/Mac|iP(hone|ad|od)/.test(navigator.platform||"")?"\u2318":"ctrl";
+  zh.innerHTML='<span>Hold <b>'+ZKEY+'</b> and scroll to zoom</span>';
+  function sayZoomKey(){
+    zh.classList.add("on");
+    clearTimeout(zhTimer);
+    zhTimer=setTimeout(function(){zh.classList.remove("on");},1200);
+  }
+  cv.addEventListener("wheel",function(e){
+    // Without the modifier the wheel scrolls the page. A chart that swallows it
+    // traps the reader against 710px of canvas.
+    if(!(e.ctrlKey||e.metaKey)){sayZoomKey();return;}
+    e.preventDefault();
+    zh.classList.remove("on");
+    // Firefox reports whole lines, Chrome pixels.
+    var k=Math.pow(1.0016,e.deltaY*(e.deltaMode===1?16:1)), ax=dx(e.offsetX), ay=dy(e.offsetY);
+    V.x0=ax+(V.x0-ax)*k; V.x1=ax+(V.x1-ax)*k;
+    V.y0=ay+(V.y0-ay)*k; V.y1=ay+(V.y1-ay)*k;
+    clampView(); draw();
+  },{passive:false});
+  // A touch screen has none of the wheel, the modifier or the hover. One finger pans the
+  // chart sideways and scrolls the page vertically, two fingers zoom, and a tap names a
+  // point — which is the only way to read a word without a mouse.
+  var pts=[], pinch=null, tipTimer=0;
+  function ptAt(id){for(var i=0;i<pts.length;i++)if(pts[i].id===id)return i;return -1;}
+  function pinchStart(){
+    var a=pts[0],b=pts[1];
+    pinch={d:Math.max(Math.hypot(b.x-a.x,b.y-a.y),1),cx:(a.x+b.x)/2,cy:(a.y+b.y)/2,
+           x0:V.x0,x1:V.x1,y0:V.y0,y1:V.y1};
+  }
+  function pinchMove(){
+    var a=pts[0],b=pts[1];
+    var k=pinch.d/Math.max(Math.hypot(b.x-a.x,b.y-a.y),1);
+    var w=(pinch.x1-pinch.x0)*k, h=(pinch.y1-pinch.y0)*k;
+    // The data under the midpoint the pinch started from follows the fingers as they move,
+    // so the gesture pans and zooms at once.
+    var ax=pinch.x0+(pinch.cx-PAD.l)/pw()*(pinch.x1-pinch.x0),
+        ay=pinch.y0+(pinch.cy-PAD.t)/ph()*(pinch.y1-pinch.y0);
+    V.x0=ax-((a.x+b.x)/2-PAD.l)/pw()*w; V.x1=V.x0+w;
+    V.y0=ay-((a.y+b.y)/2-PAD.t)/ph()*h; V.y1=V.y0+h;
+    clampView(); draw();
+  }
+  cv.addEventListener("pointerdown",function(e){
+    cv.setPointerCapture(e.pointerId);
+    pts.push({id:e.pointerId,x:e.offsetX,y:e.offsetY,ox:e.offsetX,oy:e.offsetY,
+              t:Date.now(),kind:e.pointerType});
+    if(pts.length===2){drag=null;box=null;tip.style.opacity=0;pinchStart();return;}
+    if(pts.length>2)return;
+    if(e.shiftKey){box={x0:e.offsetX,y0:e.offsetY,x1:e.offsetX,y1:e.offsetY};}
+    else drag={px:e.offsetX,py:e.offsetY,x0:V.x0,x1:V.x1,y0:V.y0,y1:V.y1};
+  });
+  cv.addEventListener("pointermove",function(e){
+    var i=ptAt(e.pointerId);
+    if(i>=0){pts[i].x=e.offsetX;pts[i].y=e.offsetY;}
+    if(pinch&&pts.length>=2){pinchMove();return;}
+    if(box){box.x1=e.offsetX;box.y1=e.offsetY;draw();return;}
+    if(drag){
+      var ux=(V.x1-V.x0)/pw(), uy=(V.y1-V.y0)/ph();
+      var mx=(e.offsetX-drag.px)*ux, my=(e.offsetY-drag.py)*uy;
+      V.x0=drag.x0-mx;V.x1=drag.x1-mx;V.y0=drag.y0-my;V.y1=drag.y1-my;
+      clampView();draw();return;
+    }
+    hover(e.offsetX,e.offsetY);
+  });
+  function release(e){
+    var i=ptAt(e.pointerId), p=i<0?null:pts.splice(i,1)[0];
+    if(pinch&&pts.length<2){
+      pinch=null;
+      // A finger lifted out of a pinch leaves the other one panning from where it now is.
+      drag=pts.length?{px:pts[0].x,py:pts[0].y,x0:V.x0,x1:V.x1,y0:V.y0,y1:V.y1}:null;
+      return;
+    }
+    if(box){
+      var a=Math.min(box.x0,box.x1),z=Math.max(box.x0,box.x1),
+          u=Math.min(box.y0,box.y1),v=Math.max(box.y0,box.y1);
+      if(z-a>8&&v-u>8){var nx0=dx(a),nx1=dx(z),ny0=dy(u),ny1=dy(v);
+        V.x0=nx0;V.x1=nx1;V.y0=ny0;V.y1=ny1;clampView();}
+      box=null;draw();
+    }
+    drag=null;
+    // A tap, not a pan: name the point under it, at a finger's precision rather than a
+    // cursor's, and drop the tooltip on its own since nothing will move off it.
+    if(p&&p.kind!=="mouse"&&e.type==="pointerup"&&Date.now()-p.t<600&&
+       Math.abs(p.x-p.ox)<8&&Math.abs(p.y-p.oy)<8){
+      hover(p.x,p.y,18);
+      clearTimeout(tipTimer);
+      tipTimer=setTimeout(function(){tip.style.opacity=0;},2600);
+    }
+  }
+  window.addEventListener("pointerup",release);
+  window.addEventListener("pointercancel",release);
+  // A touch pointer leaves the canvas the instant it lifts, which would wipe the tap's
+  // own tooltip before it was read.
+  cv.addEventListener("pointerleave",function(e){if(e.pointerType==="mouse")tip.style.opacity=0;});
+  cv.addEventListener("dblclick",function(){reset();});
+
+  function hover(mx,my,rad){
+    rad=rad||10;
+    var ax=dx(mx), ay=dy(my), best=-1, bestD=1e9;
+    var ux=(V.x1-V.x0)/pw(), win=(rad+2)*ux;
+    var lo=Math.max(0,Math.floor(ay)-1), hi=Math.min(yBot()-1,Math.floor(ay)+1);
+    for(var l=lo;l<=hi;l++){
+      var arr=byLevel[l]; if(!arr||!arr.length)continue;
+      var target=ax-win, a=0,b=arr.length-1;
+      while(a<b){var m=(a+b)>>1; if(PX[arr[m]]<target)a=m+1; else b=m;}
+      for(var j=a;j<arr.length;j++){
+        var i=arr[j]; if(PX[i]>ax+win)break;
+        if(!visible(i))continue;
+        var ddx=sx(PX[i])-mx, ddy=sy(PY[i])-my, dd=ddx*ddx+ddy*ddy;
+        if(dd<bestD){bestD=dd;best=i;}
+      }
+    }
+    if(best>=0&&bestD<=rad*rad){
+      var rk=best+1, l=LVL[best];
+      var band="rare"; for(var b=0;b<CEFR.length;b++)if(rk<=CEFR[b][1]){band=CEFR[b][2];break;}
+      tip.innerHTML='<b lang="pt">'+WORDS[best]+'</b><br><span class="m">'+
+        (l===7?"no level":LV[l])+' · rank '+rk.toLocaleString()+' · '+band+'</span>';
+      tip.style.opacity=1;
+      var tw=tip.offsetWidth,th=tip.offsetHeight;
+      tip.style.left=Math.min(Math.max(4,mx+14),W-tw-4)+"px";
+      tip.style.top=Math.min(Math.max(4,my-th-12),H-th-4)+"px";
+    } else tip.style.opacity=0;
+  }
+
+  function reset(){V.x0=0;V.x1=XMAX;V.y0=yTop();V.y1=yBot();draw();}
+  document.getElementById("btnReset").onclick=reset;
+  var bu=document.getElementById("btnUn");
+  bu.onclick=function(){showUn=!showUn;bu.setAttribute("aria-pressed",showUn?"true":"false");
+    V.y0=yTop();V.y1=yBot();clampView();draw();};
+  var bf=document.getElementById("btnFs");
+  var cbox=document.getElementById("cbox");
+  // iPhone Safari has no element fullscreen, so the button would sit there dead.
+  if(!document.fullscreenEnabled)bf.hidden=true;
+  if(matchMedia("(hover:none) and (pointer:coarse)").matches)
+    document.getElementById("hint").textContent=
+      "pinch to zoom \u00b7 swipe sideways to pan \u00b7 tap a point for the word \u00b7 double-tap to reset";
+  bf.onclick=function(){ if(document.fullscreenElement)document.exitFullscreen();
+    else cbox.requestFullscreen&&cbox.requestFullscreen(); };
+  document.addEventListener("fullscreenchange",function(){
+    bf.textContent=document.fullscreenElement?"Exit full screen":"Full screen";
+    setTimeout(resize,60);
+  });
+
+  // the page's own controls scope the chart too
+  var lastWin=0;
+  window.__scope=function(s,w,q,wins){
+    set=s; query=q;
+    if(w!==lastWin){lastWin=w;V.x0=Math.sqrt(wins[w][1]);V.x1=Math.sqrt(Math.min(wins[w][2],N));clampView();}
+    draw();
+  };
+  if(window.ResizeObserver)new ResizeObserver(resize).observe(cw);
+  window.addEventListener("resize",resize);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change",draw);
+  reset(); resize();
+  if(window.__syncScope)window.__syncScope();
+})();
+</script>

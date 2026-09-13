@@ -1,0 +1,5 @@
+# Upload the page and the headers beside it, and nothing else. `vercel link` drops an
+# OIDC token into this directory, and a static deploy would serve it at /.env.local.
+*
+!index.html
+!vercel.json
