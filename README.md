@@ -6,7 +6,7 @@ Nothing here is wired into the app.
 ## Open this first
 
 **Published at <https://defining-vocabulary.vercel.app>** — Vercel project
-`eigenlex/defining-vocabulary`, deployed from `site/`. See **Deploying** below.
+`sanoodles-dev/defining-vocabulary`, deployed from `site/`. See **Deploying** below.
 
 `defining-pt.html` — the same page as a local file, self-contained, no server needed.
 All 35,827 indexed Portuguese words, their defining level, frequency rank and CEFR band.
@@ -303,12 +303,12 @@ allowlist that keeps everything else out of the upload. Any static host serves i
 no build step and no repo behind it, so a publish is the two commands.
 
     python3 pipeline/render_page.py
-    vercel deploy site --prod --scope eigenlex
+    vercel deploy site --prod --scope sanoodles-dev
 
 `site/` is gitignored, so a fresh clone has neither the page nor the Vercel link. The first
 publish on a new machine takes one command more:
 
-    vercel link --cwd site --scope eigenlex --project defining-vocabulary --yes
+    vercel link --cwd site --scope sanoodles-dev --project defining-vocabulary --yes
 
 That writes a `VERCEL_OIDC_TOKEN` into `site/.env.local`, which is no use to a static page —
 delete it. `.vercelignore` keeps it out of the upload either way, which is the reason it is
