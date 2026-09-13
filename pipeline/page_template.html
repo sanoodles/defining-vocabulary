@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portuguese Genericity Levels</title>
+<title>Portuguese Defining Vocabulary</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -222,9 +222,9 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
 
 <div class="wrap">
   <header class="masthead">
-    <p class="eyebrow">eigenlex · feat/genericity · prototype</p>
-    <h1>Portuguese Genericity Levels</h1>
-    <p class="dek">Every indexed Portuguese word placed on a seven-step scale from most generic to most specific, worked out from which words the Portuguese Wiktionary uses to define other words.</p>
+    <p class="eyebrow">eigenlex · defining vocabulary · prototype</p>
+    <h1>Portuguese Defining Vocabulary</h1>
+    <p class="dek">Every indexed Portuguese word placed on a seven-step scale by how much the Portuguese Wiktionary leans on it to define other words — from the small core it explains everything else with, down to the words no definition ever reaches for.</p>
     <p class="source mono">401,248 Wiktionary entries → 24,108 matched to the word list → 308,680 links → 22,824 words with a level</p>
   </header>
 
@@ -239,7 +239,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
     <h2>Where the two numbers come from</h2>
     <p class="note">Every word on this page carries two numbers. They come from different sources, they are
       worked out in different ways, and neither one knows about the other. That is the point of the page: if
-      genericity were a restatement of frequency there would be nothing here to add.</p>
+      the defining level were a restatement of frequency there would be nothing here to add.</p>
 
     <div class="tblwrap">
       <table class="tbl">
@@ -254,7 +254,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
           <tr>
             <td>The Portuguese Wiktionary<span class="src mono">pt.jsonl · kaikki.org extract, 401,248 entries, 339 MB</span></td>
             <td>Every entry's definitions, as plain text</td>
-            <td>The genericity level, and nothing else</td>
+            <td>The defining level, and nothing else</td>
           </tr>
           <tr>
             <td>Lemma list<span class="src mono">lemma-pt.txt · michmech/lemmatization-lists</span></td>
@@ -291,9 +291,10 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
       B2 to 12,000, C1 to 25,000, C2 to 50,000. The thresholds were fitted once against CEFR-J in English and
       are reused for every language unchanged.</p>
 
-    <h3>How the genericity level is worked out</h3>
-    <p class="note">Genericity asks a different question: <b>how much of the dictionary leans on this word?</b>
-      A word is generic when the dictionary needs it in order to explain other words.</p>
+    <h3>How the defining level is worked out</h3>
+    <p class="note">The defining level asks a different question: <b>how much of the dictionary leans on
+      this word?</b> A word sits high when the dictionary needs it in order to explain other words, and at the
+      bottom when no definition uses it at all.</p>
     <p class="note">Read every Portuguese Wiktionary definition as a set of links.
       <span lang="pt">água</span> appears in the definition of <span lang="pt">chuva</span>, so there is a link
       <code>água → chuva</code>. Definitions that only name an inflection
@@ -303,7 +304,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
       definition at all. <b>Round 2</b> removes every word now used in fewer than 2 definitions,
       <b>round 3</b> every word used in fewer than 3, and so on until nothing is left. Removing a word takes
       its links with it, so each round pushes more words under the next round's bar. A word's level is the
-      round it falls in: out in round 1 is L7, still standing in round 7 is L1.</p>
+      round it falls in: out in round 1 is D7, still standing in round 7 is D1.</p>
     <p class="note">The rounds are the whole idea. A plain count of uses would rate a word used by a hundred
       dead ends as highly as one used by a hundred words the dictionary itself needs.
       <b>Who uses you counts for more than how many do.</b></p>
@@ -324,7 +325,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
           <tr><td>5</td><td>5 definitions</td><td class="mono">17</td><td>—</td></tr>
           <tr><td>6</td><td>6 definitions</td><td><span class="mono">7</span> — falls to 5, out</td><td>—</td></tr>
         </tbody>
-        <tfoot><tr><td colspan="2">Level</td><td>L2</td><td>L5</td></tr></tfoot>
+        <tfoot><tr><td colspan="2">Level</td><td>D2</td><td>D5</td></tr></tfoot>
       </table>
     </div>
     <p class="note"><span lang="pt">porco</span> is used only by words more specific than itself —
@@ -337,7 +338,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
       turn, so they stay, and they hold <span lang="pt">igual</span> up until round 6. Type either word into
       <b>Find a word</b> above.</p>
     <p class="note">The formal name for the rounds is the <b>out-degree <i>k</i>-core decomposition</b>, and a
-      word's level is its core number: L1 is core 6, L7 is core 0. Words inside a definition are matched to
+      word's level is its core number: D1 is core 6, D7 is core 0. Words inside a definition are matched to
       the word list through <code>forms.pt.json</code>, the same form-to-base-word map the app already
       ships.</p>
   </section>
@@ -366,15 +367,15 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
 
   <section>
     <h2>The distribution</h2>
-    <p class="note">Each step roughly doubles — the same shape <code>BAND-1</code> already uses for CEFR, and seven tabs fit the existing band row without bucketing. Narrow the frequency window and watch the shape migrate: the head of the word list leans generic, the tail piles into L7.</p>
-    <p class="note"><b>Content words only</b> hides the 218 closed-class words and 18 metalanguage terms, which is where L1's <code>o que a de um</code> live. It filters the display; the levels themselves are unchanged, because restricting the graph costs two levels of resolution and reorders nothing.</p>
+    <p class="note">Each step roughly doubles — the same shape <code>BAND-1</code> already uses for CEFR, and seven tabs fit the existing band row without bucketing. Narrow the frequency window and watch the shape migrate: the head of the word list does the defining, the tail piles into D7.</p>
+    <p class="note"><b>Content words only</b> hides the 218 closed-class words and 18 metalanguage terms, which is where D1's <code>o que a de um</code> live. It filters the display; the levels themselves are unchanged, because restricting the graph costs two levels of resolution and reorders nothing.</p>
     <p class="scopeline" id="scope"></p>
     <div class="dist" id="dist"></div>
   </section>
 
   <section class="chartsec">
     <div class="inner">
-      <h2>Frequency against genericity</h2>
+      <h2>Frequency against defining level</h2>
       <p class="note">One point per word that has a level. A search dims the rest rather than hiding it, so a match keeps its context.</p>
       <p class="note">Jitter within each level is hashed from the word, so points never move between renders; the level itself is one of seven. The axis is square-root rather than log, which happens to give each CEFR band — the vertical stripes — a roughly equal share of the width.</p>
       <div class="chartbox" id="cbox">
@@ -395,7 +396,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
 
   <section>
     <h2>Browse</h2>
-    <p class="note">At ranks 2,001–6,000, <b>pagamento</b> sits at L3 and <b>uau</b> at L7 — eight ranks apart in the word list, four levels apart here. That gap is the whole case for a third view.</p>
+    <p class="note">At ranks 2,001–6,000, <b>pagamento</b> sits at D3 and <b>uau</b> at D7 — eight ranks apart in the word list, four levels apart here. That gap is the whole case for a third view.</p>
     <div class="cols" id="cols" lang="pt"></div>
   </section>
 </div>
@@ -403,7 +404,8 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
 <div class="wrap">
   <div class="method">
     <h2>What to watch for</h2>
-    <p><b>Read it as generic → specific, never easy → hard.</b> <code>olá</code>, <code>uau</code> and <code>obrigado</code> are beginner words that sit at L7, because nothing is defined in terms of "hello". The measure is doing its job; the label has to say so.</p>
+    <p><b>Read it as how much the dictionary leans on a word, never as easy → hard.</b> <code>olá</code> and <code>uau</code> are A1 vocabulary at D7, because no definition is ever written in terms of "hello". That is the measure stating a fact about the dictionary, not about the word.</p>
+    <p><b>It is not a taxonomy either.</b> <code>animal</code> sits at D2 and <code>água</code> at D3, though one is a category and the other a substance; <code>planta</code> is D3 beside <code>olho</code> and <code>boca</code>. What separates them is how often a definition reaches for the word, not how general its meaning is. The D1 list makes the same point from the other end: a quarter of it is <code>palavra oração expressar etc pronome preposição</code> — the vocabulary of writing definitions rather than of naming things.</p>
     <p><b>The uncovered third</b> is 13,003 words. 1,191 are inflection-only Wiktionary entries that could inherit their base word's level. The remaining 11,754 have no Wiktionary entry at all and read, in frequency order, <code>cincar miudar john jack dessar sam farar mr michael charlie</code> — largely names and debris that the name list and <code>dictGate</code> already missed, so this doubles as a quality probe on the existing word list.</p>
   </div>
 </div>
@@ -413,8 +415,8 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
 var D=JSON.parse(document.getElementById("data").textContent);
 (function(){
   var WORDS=D.words, C=D.cores, P=D.pos, N=WORDS.length;
-  var LV=["L1","L2","L3","L4","L5","L6","L7"];
-  var TAG=["most generic","","","","","","most specific"];
+  var LV=["D1","D2","D3","D4","D5","D6","D7"];
+  var TAG=["the defining core","","","","","","never used to define"];
   var CEFR=[[1000,"A1"],[3000,"A2"],[6000,"B1"],[12000,"B2"],[25000,"C1"],[50000,"C2"]];
   function cefr(r){for(var i=0;i<CEFR.length;i++)if(r<=CEFR[i][0])return CEFR[i][1];return "rare";}
   function lev(i){var c=C[i];return c==="-"?7:6-(+c);}
@@ -503,7 +505,7 @@ var D=JSON.parse(document.getElementById("data").textContent);
         var box=document.createElement("div");box.className="hit";
         box.innerHTML='<span class="w" lang="pt">'+WORDS[idx]+'</span>'+
           '<span class="pill">'+KIND[cls]+'</span><dl>'+
-          '<div><dt>Genericity</dt><dd>'+(lh===7?"no level":LV[lh]+(TAG[lh]?" · "+TAG[lh]:""))+'</dd></div>'+
+          '<div><dt>Defining level</dt><dd>'+(lh===7?"no level":LV[lh]+(TAG[lh]?" · "+TAG[lh]:""))+'</dd></div>'+
           '<div><dt>Frequency rank</dt><dd class="mono">'+rk.toLocaleString()+'</dd></div>'+
           '<div><dt>CEFR</dt><dd>'+cefr(rk)+'</dd></div></dl>'+
           (set===1&&cls!=="c"?'<span class="tag">hidden by the current word set</span>':'');
@@ -538,7 +540,7 @@ var D=JSON.parse(document.getElementById("data").textContent);
   var WORDS=D.words, C=D.cores, P=D.pos, N=WORDS.length;
   var cw=document.getElementById("cw"), cv=document.getElementById("cv"),
       ctx=cv.getContext("2d"), tip=document.getElementById("tip");
-  var LV=["L1","L2","L3","L4","L5","L6","L7","none"];
+  var LV=["D1","D2","D3","D4","D5","D6","D7","none"];
   var CEFR=[[1,1000,"A1"],[1001,3000,"A2"],[3001,6000,"B1"],[6001,12000,"B2"],
             [12001,25000,"C1"],[25001,50000,"C2"]];
 

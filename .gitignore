@@ -3,7 +3,7 @@ pt.jsonl
 
 # Built page. `python3 pipeline/render_page.py` writes it from page_template.html and
 # pt_levels.json, with no network and no binary behind it.
-genericity-pt.html
+defining-pt.html
 
 # The whole deploy directory is generated from pipeline/ by that same command, and the
 # Vercel link inside it writes an OIDC token.

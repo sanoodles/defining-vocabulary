@@ -1,24 +1,24 @@
-# Genericity levels — Portuguese prototype
+# Defining vocabulary — Portuguese prototype
 
 Feasibility spike for a third band view in eigenlex, alongside `freq` and `cefr`.
-Nothing here is wired into the app. Branch: `feat/genericity`.
+Nothing here is wired into the app.
 
 ## Open this first
 
-**Published at <https://eigenlex-genericity.vercel.app>** — Vercel project
-`eigenlex/eigenlex-genericity`, deployed from `site/`. See **Deploying** below.
+**Published at <https://eigenlex-defining-vocabulary.vercel.app>** — Vercel project
+`eigenlex/eigenlex-defining-vocabulary`, deployed from `site/`. See **Deploying** below.
 
-`genericity-pt.html` — the same page as a local file, self-contained, no server needed.
-All 35,827 indexed Portuguese words, their genericity level, frequency rank and CEFR band.
+`defining-pt.html` — the same page as a local file, self-contained, no server needed.
+All 35,827 indexed Portuguese words, their defining level, frequency rank and CEFR band.
 Set the frequency window to 2,001–6,000 to see the levels separate at constant frequency.
 Use the **word set** toggle to hide function words and dictionary metalanguage.
 All three controls sit in one **Scope** bar, which governs the three views below it: the
 distribution chart, the scatter and the columns. The frequency window also sets the
 scatter's initial x range. Search filters the distribution and the columns; in the scatter
 it dims non-matches instead of hiding them, so a match keeps its context — searching `mente`
-shows the -mente adverbs absent from L1-L2 and piled into L5-L7.
+shows the -mente adverbs absent from D1-D2 and piled into D5-D7.
 
-The **frequency against genericity** scatter draws all 22,824 levelled words on canvas.
+The **frequency against defining level** scatter draws all 22,824 levelled words on canvas.
 `ctrl`/`⌘`+wheel zooms, drag pans, shift+drag box-zooms, double-click resets, hover names
 the word. Full screen is a button. A touch screen has none of those, so it gets its own set
 — see **On a phone** below. Three choices worth knowing:
@@ -26,7 +26,7 @@ the word. Full screen is a button. A touch screen has none of those, so it gets 
 | Choice | Why |
 | --- | --- |
 | Zoom takes `ctrl`/`⌘`, a bare wheel does not | A bare wheel scrolls the page. A 710px canvas that swallows it traps the reader mid-page, so the chart only claims the wheel when the modifier is held, and an overlay names the key when it is not. `touch-action:pan-y` is the same fix for a vertical swipe. Trackpad pinch arrives as a ctrl wheel event, so it zooms for free |
-| Stable jitter within each band | Genericity is 7 discrete values, so without it every word stacks on seven straight lines. The offset is hashed from the word, so points never move between renders |
+| Stable jitter within each band | The defining level is 7 discrete values, so without it every word stacks on seven straight lines. The offset is hashed from the word, so points never move between renders |
 | Square-root x axis, not log | Log gave ranks 1-1,000 two thirds of the width. Sqrt gives each CEFR band a roughly equal share (16/12/12/17/26/17%) |
 
 Points are one ink colour, not the level ramp: the y position already encodes the level, and
@@ -52,7 +52,7 @@ The scatter clears the stuck bar at every viewport, and not by luck: the chart i
 
 `Where the two numbers come from` sits between the figures and the scope bar, and answers
 three questions: what the data sources are, how the frequency rank is worked out, and how
-the genericity level is worked out. The sources
+the defining level is worked out. The sources
 table names all four inputs, and says which of them was already building the app.
 
 One term per idea throughout, so a reader is never asked to guess that two words mean
@@ -62,7 +62,7 @@ the same thing:
 | --- | --- | --- |
 | An entry's explanatory text | definition | gloss |
 | The 35,827 indexed words | word list | corpus, vocabulary |
-| A genericity step | level | step, band, stratum |
+| A step on the scale | level | step, band, stratum |
 | A CEFR or frequency group | band | level |
 | `u -> v` | link | edge |
 | A word that has one | has a level | levelled |
@@ -71,7 +71,20 @@ the same thing:
 
 An edge `u -> v` means *u appears in v's definition*. A word's level is its out-degree
 core number: the largest k for which it still helps define k words that themselves
-survive at k. Level 1 = core 6 = most generic. Level 7 = core 0 = most specific.
+survive at k. D1 = core 6 = the core the dictionary explains everything else with.
+D7 = core 0 = never used in any definition.
+
+What the peel finds is an **emergent defining vocabulary** — the uncontrolled-corpus
+analogue of the Longman Defining Vocabulary or Ogden's Basic English, discovered from the
+dictionary's own usage rather than fixed in advance by an editor.
+
+**It is not a measure of how general a word's meaning is.** Three readings of the data
+say so: `animal` is D2 while
+`água` is D3, though one is a superordinate category and the other a substance; `planta`
+is D3 beside `olho` and `boca`; and a quarter of D1 is `palavra oração expressar etc
+pronome preposição`, the vocabulary of writing definitions rather than of naming things.
+The axis is how often a definition reaches for a word, which correlates with generality
+without being it.
 
 The page states the same thing as rounds of peeling, which needs no graph vocabulary:
 round k removes every word now used in fewer than k definitions, and a word's level is
@@ -91,7 +104,7 @@ near 50 spread across five different levels.
 | 4 | 28 | — |
 | 5 | 17 | — |
 | 6 | 7 -> falls to 5, out | — |
-| **Level** | **L2** | **L5** |
+| **Level** | **D2** | **D5** |
 
 `porco` is used only by words more specific than itself (`presunto`, `javali`,
 `toucinho`, `leitão`, `pocilga`), and 55 of its 67 users are gone before round 3. `igual`
@@ -99,14 +112,15 @@ is used at every level, including by `valor`, `diferente`, `semelhante` and `com
 which survive and hold it up. Reproduce both columns by instrumenting the peel loop in
 `pipeline/kcore.py` with a watch set.
 
-Read it as generic -> specific, never easy -> hard. `olá` and `uau` are A1 vocabulary
-sitting at L7, because nothing is defined in terms of "hello".
+Read it as how much the dictionary leans on a word, never as easy -> hard. `olá` and
+`uau` are A1 vocabulary sitting at D7, because no definition is ever written in terms of
+"hello". D7 is a fact about the dictionary, not about the word.
 
 ## Parts of speech
 
 The toggle is a **display filter only**. Restricting the graph itself was tested and rejected:
 
-| Variant | Edges | Mean out-degree | Levels | r vs log rank | L1 size |
+| Variant | Edges | Mean out-degree | Levels | r vs log rank | D1 size |
 | --- | --- | --- | --- | --- | --- |
 | A · all parts of speech (shipped) | 308,617 | 13.5 | 7 | -0.591 | 51 |
 | B · noun+adj+verb+adv | 254,554 | 11.3 | 5 | -0.576 | 1,531 |
@@ -248,7 +262,7 @@ The chart is an overview; the columns and the word lookup carry the same data in
 included, so the text column and the chart share a left edge. Side gutters are
 `clamp(20px, 2vw, 40px)`.
 
-Browse holds **eight** columns (L1-L7 plus No level), and this width is what keeps them on
+Browse holds **eight** columns (D1-D7 plus No level), and this width is what keeps them on
 one row. Anything narrower wraps the eighth to a row of its own at every laptop width.
 
 | Viewport | Content width | Browse columns per row | Column width |
@@ -265,7 +279,7 @@ themselves at 70-74ch, so the container only ever moves the bars, the columns an
 scatter.
 
 `pipeline/render_page.py` inlines `pt_levels.json` into `pipeline/page_template.html` and
-writes `genericity-pt.html`. Edit the template, never the built page.
+writes `defining-pt.html`. Edit the template, never the built page.
 
 ## Deploying
 
@@ -279,7 +293,7 @@ and the app is a tool; coupling them costs four things and buys nothing a link d
 | The data | 360KB of inlined Portuguese-only JSON, against an app that serves per-language artifacts through routes |
 | The spec | Every surface in that repo carries a rule ID and a test naming it. This page carries none, and writing rules for a spike's prose is the wrong work |
 
-What belongs in the app is the *feature* this argues for — a `genericity` value beside
+What belongs in the app is the *feature* this argues for — a `defining` value beside
 `freq` and `cefr`, fed by a column in `word-bands.pt.json`. That shares `bands.ts`, the band
 browser and the URL state. This page shares none of it and never has to move.
 
@@ -293,7 +307,7 @@ no build step and no repo behind it, so a publish is the two commands.
 `site/` is gitignored, so a fresh clone has neither the page nor the Vercel link. The first
 publish on a new machine takes one command more:
 
-    vercel link --cwd site --scope eigenlex --project eigenlex-genericity --yes
+    vercel link --cwd site --scope eigenlex --project eigenlex-defining-vocabulary --yes
 
 That writes a `VERCEL_OIDC_TOKEN` into `site/.env.local`, which is no use to a static page —
 delete it. `.vercelignore` keeps it out of the upload either way, which is the reason it is
