@@ -290,6 +290,15 @@ no build step and no repo behind it, so a publish is the two commands.
     python3 pipeline/render_page.py
     vercel deploy site --prod --scope eigenlex
 
+`site/` is gitignored, so a fresh clone has neither the page nor the Vercel link. The first
+publish on a new machine takes one command more:
+
+    vercel link --cwd site --scope eigenlex --project eigenlex-genericity --yes
+
+That writes a `VERCEL_OIDC_TOKEN` into `site/.env.local`, which is no use to a static page —
+delete it. `.vercelignore` keeps it out of the upload either way, which is the reason it is
+an allowlist rather than a list of exclusions.
+
 | Choice | Why |
 | --- | --- |
 | `site/` rather than the directory root | The root holds 6MB of intermediate JSON and a 339MB extract's leftovers. A deploy directory of exactly one page cannot leak them by accident |
