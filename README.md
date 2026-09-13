@@ -5,8 +5,8 @@ Nothing here is wired into the app.
 
 ## Open this first
 
-**Published at <https://eigenlex-defining-vocabulary.vercel.app>** — Vercel project
-`eigenlex/eigenlex-defining-vocabulary`, deployed from `site/`. See **Deploying** below.
+**Published at <https://defining-vocabulary.vercel.app>** — Vercel project
+`eigenlex/defining-vocabulary`, deployed from `site/`. See **Deploying** below.
 
 `defining-pt.html` — the same page as a local file, self-contained, no server needed.
 All 35,827 indexed Portuguese words, their defining level, frequency rank and CEFR band.
@@ -307,7 +307,7 @@ no build step and no repo behind it, so a publish is the two commands.
 `site/` is gitignored, so a fresh clone has neither the page nor the Vercel link. The first
 publish on a new machine takes one command more:
 
-    vercel link --cwd site --scope eigenlex --project eigenlex-defining-vocabulary --yes
+    vercel link --cwd site --scope eigenlex --project defining-vocabulary --yes
 
 That writes a `VERCEL_OIDC_TOKEN` into `site/.env.local`, which is no use to a static page —
 delete it. `.vercelignore` keeps it out of the upload either way, which is the reason it is
