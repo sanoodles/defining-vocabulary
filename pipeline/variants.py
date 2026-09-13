@@ -1,5 +1,5 @@
 import json, re, collections, math, statistics
-W="/home/itf/repos/eigenlex/apps/web/data"
+W="/home/itf/repos/word-bands/apps/web/data"
 ranked=json.load(open(f"{W}/word-bands.pt.json"))["ranked"]
 index={w.lower():i+1 for i,w in enumerate(ranked)}
 forms={k.lower():v.lower() for k,v in json.load(open(f"{W}/forms.pt.json")).items()}

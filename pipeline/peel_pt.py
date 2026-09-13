@@ -1,6 +1,6 @@
 import json, re, sys, collections
 
-W = "/home/itf/repos/eigenlex/apps/web/data"
+W = "/home/itf/repos/word-bands/apps/web/data"
 ranked = json.load(open(f"{W}/word-bands.pt.json"))["ranked"]
 index  = {w.lower(): i+1 for i, w in enumerate(ranked)}          # word -> rank
 forms  = json.load(open(f"{W}/forms.pt.json"))                    # inflected -> base

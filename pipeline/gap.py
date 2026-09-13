@@ -1,5 +1,5 @@
 import json, re, collections
-W="/home/itf/repos/eigenlex/apps/web/data"
+W="/home/itf/repos/word-bands/apps/web/data"
 index={w.lower():i+1 for i,w in enumerate(json.load(open(f"{W}/word-bands.pt.json"))["ranked"])}
 nolevel=set(json.load(open("pt_peel.json"))["no_level"])
 INFL=re.compile(r"\b(primeira|segunda|terceira) pessoa\b|\b(feminino|masculino|plural|singular) de\b"

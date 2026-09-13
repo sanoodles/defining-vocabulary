@@ -1,6 +1,6 @@
 # Defining vocabulary — Portuguese prototype
 
-Feasibility spike for a third band view in eigenlex, alongside `freq` and `cefr`.
+Feasibility spike for a third band view in word-bands, alongside `freq` and `cefr`.
 Nothing here is wired into the app.
 
 ## Open this first
@@ -180,7 +180,8 @@ Run in order from this directory. Needs the source extract first:
 | `pipeline/peel_pt.py` | The naive 1-core peel, kept to show why it fails |
 | `pipeline/peel2.py` | The toy dictionary demo of peeling and its traps |
 
-Paths inside the scripts point at `apps/web/data/` in the repo.
+Paths inside the scripts point at `apps/web/data/` in the word-bands repo, as an absolute
+path in each of the five — so moving that repo breaks them all until they are repointed.
 
 ## On a phone
 
