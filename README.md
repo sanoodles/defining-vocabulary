@@ -179,9 +179,46 @@ Run in order from this directory. Needs the source extract first:
 | `pipeline/gap.py` | Split the no-level words by cause |
 | `pipeline/peel_pt.py` | The naive 1-core peel, kept to show why it fails |
 | `pipeline/peel2.py` | The toy dictionary demo of peeling and its traps |
+| `pipeline/gate_gap.py` | What word-bands' filters let through, crossed with this extract. Needs no `pt.jsonl` |
 
 Paths inside the scripts point at `apps/web/data/` in the word-bands repo, as an absolute
 path in each of the five — so moving that repo breaks them all until they are repointed.
+
+## What this says about the word list
+
+Building the graph meant looking every one of the 35,827 Portuguese words up in Wiktionary.
+11,719 of them are not in it at all. That is worth handing back, because word-bands built
+the list and nothing had checked its first 25,000 words against a dictionary.
+
+Being absent from one dictionary proves nothing, because each one drops ordinary words for
+its own reasons:
+
+| Dictionary | Has no entry for | Because |
+| --- | --- | --- |
+| Wiktionary | `boa` `má` `última` `certa` | It files them under `bom`, `mau`, `último`, `certo` |
+| `lemma-pt.txt`, the list word-bands filters with | `que` `de` `com` `se` | It lists only words that inflect |
+
+Being absent from **both** is the signal. 7,565 words are:
+
+| Kind | Examples |
+| --- | --- |
+| People's names | `John` `Jack` `Sam` `Michael` `Charlie` `Frank` |
+| English, left untranslated | `The` `of` `and` `New` `City` `Red` `Hey` |
+| Misspellings | `näo` for `não`, `voce` for `você` |
+| Abbreviations | `km` `srta` `fbi` `Mr` `St` |
+
+Every one of the 7,565 sits in the first 25,000 words. word-bands does check a word against
+a dictionary, but only from rank 25,000 onward, and past that rank the count is zero. So the
+check works. It starts too late.
+
+2,704 of them are already listed in `names.txt`, the file word-bands uses to drop personal
+names. The filter had the word in hand and kept it anyway.
+
+Some of the 7,565 are real words: `bem-vindos`, `directamente` and `Iorque` are ordinary
+Portuguese. This is a list to review, not a list to delete.
+
+`pipeline/gate_gap.py` prints all of it, and needs no `pt.jsonl`. The long version is in
+word-bands' `CLAUDE.md`, under "Measuring what the gate misses".
 
 ## On a phone
 

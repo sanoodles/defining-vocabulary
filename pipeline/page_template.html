@@ -93,6 +93,7 @@ h2{font-family:Newsreader,Georgia,serif;font-weight:600;font-size:23px;margin:0;
 .row .v{font-size:14px;color:var(--muted);white-space:nowrap}
 .row .v b{color:var(--text);font-weight:500}
 .row .tag{font-size:14px;color:var(--faint)}
+.row.none{margin-top:6px;padding-top:10px;border-top:1px solid var(--line)}
 @media (max-width:560px){.row{grid-template-columns:30px minmax(0,1fr);row-gap:2px}.row .v{grid-column:2}}
 
 /* controls */
@@ -465,6 +466,9 @@ var D=JSON.parse(document.getElementById("data").textContent);
     }
     var levelled=0,peak=0;
     for(var l=0;l<7;l++){levelled+=TOT[l];if(TOT[l]>peak)peak=TOT[l];}
+    // All eight bars share one scale, so their lengths compare as counts. The two
+    // percentages do not share a base, which is what the rule and the caption carry.
+    if(TOT[7]>peak)peak=TOT[7];
     dist.innerHTML="";
     for(var l=0;l<7;l++){
       var pc=levelled?TOT[l]/levelled*100:0;
@@ -475,24 +479,38 @@ var D=JSON.parse(document.getElementById("data").textContent);
         (TAG[l]?' <span class="tag">'+TAG[l]+'</span>':'')+'</span>';
       dist.appendChild(r);
     }
+    if(TOT[7]){
+      var nr=document.createElement("div");nr.className="row none";
+      nr.innerHTML='<span class="k">none</span>'+
+        '<span class="track"><span class="fill" style="width:'+Math.max(TOT[7]/peak*100,0.6)+
+        '%;background:'+colorOf(7)+'"></span></span>'+
+        '<span class="v"><b class="mono">'+TOT[7].toLocaleString()+'</b> \u00b7 '+
+        (inScope?(TOT[7]/inScope*100).toFixed(1):"0.0")+'% <span class="tag">of every word</span></span>';
+      dist.appendChild(nr);
+    }
     var where=(win===0?"the whole list":"ranks "+WINS[win][0]);
     document.getElementById("scope").innerHTML= q
       ? '<b class="mono">'+levelled.toLocaleString()+'</b> of <b class="mono">'+inScope.toLocaleString()+
         '</b> '+(set===1?"content words":"words")+' matching \u201c'+q.replace(/</g,"&lt;")+
-        '\u201d in '+where+' carry a level'+(TOT[7]?", and "+TOT[7].toLocaleString()+" do not":"")+
-        '. Shares are of the words that have one.'
+        '\u201d in '+where+' carry a level. '+(TOT[7]
+          ?"Shares above the rule are of the words that have one; the row below it is of "+
+           "every word in scope."
+          :"Shares are of the words that have one.")
       : '<b class="mono">'+levelled.toLocaleString()+'</b> of <b class="mono">'+inScope.toLocaleString()+
         '</b> '+(set===1?"content words":"words")+" in "+where+
-        " carry a level"+(TOT[7]?", and "+TOT[7].toLocaleString()+" do not":"")+
-        ". Shares are of the words that have one.";
+        " carry a level. "+(TOT[7]
+          ?"Shares above the rule are of the words that have one; the row below it is of "+
+           "every word in scope."
+          :"Shares are of the words that have one.");
 
     // columns — same scope, plus the search
-    var buckets=[[],[],[],[],[],[],[],[]],counts=[0,0,0,0,0,0,0,0];
+    var buckets=[[],[],[],[],[],[],[],[]],counts=[0,0,0,0,0,0,0,0],noEntry=0;
     for(var i=lo-1;i<hi&&i<N;i++){
       if(!inSet(i))continue;
       var w=WORDS[i];
       if(q&&w.toLowerCase().indexOf(q)===-1)continue;
       var l2=lev(i);counts[l2]++;
+      if(l2===7&&P[i]==="?")noEntry++;
       if(buckets[l2].length<CAP)buckets[l2].push([w,i+1]);
     }
 
@@ -517,7 +535,13 @@ var D=JSON.parse(document.getElementById("data").textContent);
     for(var l=0;l<8;l++){
       var c=document.createElement("div");c.className="col";
       var name=l===7?"No level":LV[l];
-      var sub=l===7?"no usable definition":(TAG[l]||"");
+      // Two unlike causes sit in this column, and the larger one is not a fact about
+      // the dictionary: those words never had an entry to be defined by.
+      var sub=l===7
+        ? (noEntry?(counts[7]-noEntry).toLocaleString()+" with an entry \u00b7 "+
+                   noEntry.toLocaleString()+" not in Wiktionary"
+                 : "all have an entry")
+        : (TAG[l]||"");
       var head='<div class="stripe" style="background:'+colorOf(l)+'"></div>'+
         '<header><span class="lvl">'+name+'</span><span class="cnt mono">'+counts[l].toLocaleString()+
         (sub?'</span><span class="cnt">'+sub:'')+'</span></header>';
