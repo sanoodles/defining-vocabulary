@@ -1,5 +1,6 @@
-import json, collections, math, statistics
-core=json.load(open("pt_core.json")); d=json.load(open("pt_graph.json")); rank=d["rank"]
+import json, collections, math, statistics, sys
+lang=sys.argv[1]
+core=json.load(open(f"{lang}_core.json")); d=json.load(open(f"{lang}_graph.json")); rank=d["rank"]
 ws=list(core)
 xs=[math.log(rank[w]) for w in ws]; ys=[core[w] for w in ws]
 mx,my=statistics.mean(xs),statistics.mean(ys)

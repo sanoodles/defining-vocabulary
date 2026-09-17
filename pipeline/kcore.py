@@ -1,5 +1,6 @@
-import json, collections
-d=json.load(open("pt_graph.json")); graph={k:set(v) for k,v in d["graph"].items()}; rank=d["rank"]
+import json, collections, sys
+lang=sys.argv[1]
+d=json.load(open(f"{lang}_graph.json")); graph={k:set(v) for k,v in d["graph"].items()}; rank=d["rank"]
 nodes=set(graph)
 outdeg=collections.Counter()
 for v in nodes:
@@ -27,4 +28,4 @@ print(f"{'...':>5}")
 for c in sorted(dist)[:3]:
     ws=sorted((w for w in core if core[w]==c), key=lambda w: rank[w])
     print(f"{c:>5}{dist[c]:>9,}{100*dist[c]/len(core):>7.1f}%  {' '.join(ws[:7])}")
-json.dump(core, open("pt_core.json","w"))
+json.dump(core, open(f"{lang}_core.json","w"))

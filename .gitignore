@@ -1,5 +1,6 @@
-# The source extract: 339MB, and the README carries the URL it comes from.
+# The source extracts. The README carries the URLs they come from.
 pt.jsonl
+wiktextract-*.jsonl.gz
 
 # Built page. `python3 pipeline/render_page.py` writes it from page_template.html and
 # pt_levels.json, with no network and no binary behind it.

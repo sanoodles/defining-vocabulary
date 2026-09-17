@@ -1,7 +1,8 @@
-# Defining vocabulary — Portuguese prototype
+# Defining vocabulary
 
-Feasibility spike for a third band view in word-bands, alongside `freq` and `cefr`.
-Nothing here is wired into the app.
+The pipeline behind word-bands' third band view, `defining`, alongside `freq` and `cefr`.
+It emits the levels the app ships for Portuguese and Italian. The page is a report on the
+Portuguese levels.
 
 ## Open this first
 
@@ -150,15 +151,17 @@ Run `pipeline/variants.py` and `pipeline/variantD.py` to reproduce the table.
 | `pt_peel.json` | the naive 1-core peel: strata, kernel, no-level list |
 | `pt_graph.json` | the definitional graph, 22,824 nodes / 308,680 edges |
 | `pt_core_content4.json` `pt_core_content3.json` `pt_core_D.json` | the rejected variants, kept for comparison |
+| `it_core.json` | word -> out-degree core number, 21,922 entries |
+| `it_graph.json` | the definitional graph, 21,922 nodes / 353,953 edges |
 
 ## Numbers
 
-| | |
-| --- | --- |
-| Levels | 7, shares 0.2 / 1.8 / 5.2 / 9.0 / 18.2 / 26.8 / 38.7% |
-| Coverage | 22,824 of 35,827 = 64%, plus 1,191 recoverable inflection-only entries |
-| Mean out-degree | 13.5 |
-| Correlation with log frequency rank | -0.59 |
+| | Portuguese | Italian |
+| --- | --- | --- |
+| Levels | 7, shares 0.2 / 1.8 / 5.2 / 9.0 / 18.2 / 26.8 / 38.7% | 7, shares 1.7 / 3.2 / 5.1 / 7.4 / 13.2 / 25.2 / 44.3% |
+| Coverage | 22,824 of 35,827 = 64%, plus 1,191 recoverable inflection-only entries | 21,922 of 33,480 = 65% |
+| Mean out-degree | 13.5 | 16.1 |
+| Correlation with log frequency rank | -0.59 | -0.57 |
 
 The naive 1-core peel does **not** work on Wiktionary: 61% kernel, empty middle.
 Wiktionary has no controlled defining vocabulary, so the graph is too dense to peel.
@@ -166,23 +169,64 @@ The k-core generalisation is the fix and is what produced the levels above.
 
 ## Pipeline
 
-Run in order from this directory. Needs the source extract first:
+Run in order from this directory. The first four take a language code, `pt` or `it`, and
+need that language's own Wiktionary extract first:
+
+    curl -o wiktextract-pt.jsonl.gz https://kaikki.org/ptwiktionary/raw-wiktextract-data.jsonl.gz   # 36MB
+    curl -o wiktextract-it.jsonl.gz https://kaikki.org/itwiktionary/raw-wiktextract-data.jsonl.gz   # 40MB
+
+Each file holds every language its Wiktionary defines, and `build_graph.py` keeps the
+entries in the language itself. The committed Portuguese files are built with the phrase
+list `INFL`, as in `gap.py`, rather than with `form_of`. Rebuilding them with these scripts
+changes the level of 241 words, 1.1% of those with one, and keeps seven levels.
+
+The other scripts are about the Portuguese page and read kaikki's Portuguese-only file,
+which kaikki marks deprecated:
 
     curl -o pt.jsonl \
       'https://kaikki.org/ptwiktionary/Portugu%C3%AAs/kaikki.org-dictionary-Portugu%C3%AAs.jsonl'   # 339MB
 
 | Script | Does |
 | --- | --- |
-| `pipeline/build_graph.py` | Parse glosses, resolve tokens through `forms.pt.json`, write `pt_graph.json` |
-| `pipeline/kcore.py` | Out-degree core decomposition -> `pt_core.json` |
-| `pipeline/analyse.py` | Correlation with frequency, frequency-controlled samples |
+| `pipeline/build_graph.py <lang>` | Parse glosses, resolve tokens through `forms.<lang>.json`, write `<lang>_graph.json` |
+| `pipeline/kcore.py <lang>` | Out-degree core decomposition -> `<lang>_core.json` |
+| `pipeline/emit_artifact.py <lang>` | Write `defining.<lang>.json` into word-bands. Refuses any number of levels but seven |
+| `pipeline/analyse.py <lang>` | Correlation with frequency, frequency-controlled samples |
 | `pipeline/gap.py` | Split the no-level words by cause |
 | `pipeline/peel_pt.py` | The naive 1-core peel, kept to show why it fails |
 | `pipeline/peel2.py` | The toy dictionary demo of peeling and its traps |
 | `pipeline/gate_gap.py` | What word-bands' filters let through, crossed with this extract. Needs no `pt.jsonl` |
 
 Paths inside the scripts point at `apps/web/data/` in the word-bands repo, as an absolute
-path in each of the five — so moving that repo breaks them all until they are repointed.
+path in each of the seven — so moving that repo breaks them all until they are repointed.
+
+## Italian
+
+The same method, run on the Italian Wiktionary. It gives seven levels, as Portuguese does,
+and they separate at constant frequency in the same way. Among the words ranked
+2,000-6,000, D1 is the vocabulary of writing definitions (`definire` `frase` `confrontare`)
+and D7 holds words no definition uses (`sbirro` `gelato` `bussare`). `articolo` and
+`formaggio` are each used in 32 definitions, sit at ranks 1,787 and 1,932, and finish at D1
+and D5. `ciao` is A1 vocabulary at D7, like `olá`.
+
+`build_graph.py` needs three details for Italian:
+
+| Detail | Why |
+| --- | --- |
+| An inflection is skipped by Wiktextract's own `form_of` marking | One filter serves every edition, with no per-language list of phrases like "plurale di" |
+| An elided word is split off and spelled out | The tokenizer reads `dell'acqua` as one word. Whole, it resolves to nothing, and both `della` and `acqua` lose the link. Splitting adds 3.5% more links in Italian |
+| Link labels are cut out of the definition | The Italian extract leaves `( approfondimento)` and `( citazioni)` inside 25 definitions. Kept, they raise five words a level each |
+
+The app shows exactly seven levels, so a language whose graph peels into another number
+does not fit it. `emit_artifact.py` refuses one. On the September 2026 extracts:
+
+| Language | Levels |
+| --- | --- |
+| Portuguese, Italian | 7 |
+| Spanish | 11 |
+| French | 14 |
+| English | 20 |
+| German | 5 |
 
 ## What this says about the word list
 
