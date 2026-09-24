@@ -1,8 +1,8 @@
 # Defining vocabulary
 
 The pipeline behind word-bands' third band view, `defining`, alongside `freq` and `cefr`.
-It emits the levels the app ships for Portuguese and Italian. The page is a report on the
-Portuguese levels.
+It emits the levels the app ships for Portuguese, Italian and French. The page is a report
+on the Portuguese levels.
 
 ## Open this first
 
@@ -147,21 +147,23 @@ Run `pipeline/variants.py` and `pipeline/variantD.py` to reproduce the table.
 | File | Holds |
 | --- | --- |
 | `pt_levels.json` | `words` (frequency order), `cores` (one char, `-` = no level), `pos` (`c` content / `f` function / `m` metalanguage / `?` no entry) |
-| `pt_core.json` | word -> out-degree core number, 22,824 entries |
+| `pt_core.json` | word -> out-degree core number, 22,293 entries |
 | `pt_peel.json` | the naive 1-core peel: strata, kernel, no-level list |
-| `pt_graph.json` | the definitional graph, 22,824 nodes / 308,680 edges |
+| `pt_graph.json` | the definitional graph, 22,293 nodes / 309,415 edges |
 | `pt_core_content4.json` `pt_core_content3.json` `pt_core_D.json` | the rejected variants, kept for comparison |
-| `it_core.json` | word -> out-degree core number, 21,922 entries |
-| `it_graph.json` | the definitional graph, 21,922 nodes / 353,953 edges |
+| `it_core.json` | word -> out-degree core number, 21,530 entries |
+| `it_graph.json` | the definitional graph, 21,530 nodes / 349,191 edges |
+| `fr_core.json` | word -> out-degree core number, 27,794 entries |
+| `fr_graph.json` | the definitional graph, 27,794 nodes / 724,469 edges |
 
 ## Numbers
 
-| | Portuguese | Italian |
-| --- | --- | --- |
-| Levels | 7, shares 0.2 / 1.8 / 5.2 / 9.0 / 18.2 / 26.8 / 38.7% | 7, shares 1.7 / 3.2 / 5.1 / 7.4 / 13.2 / 25.2 / 44.3% |
-| Coverage | 22,824 of 35,827 = 64%, plus 1,191 recoverable inflection-only entries | 21,922 of 33,480 = 65% |
-| Mean out-degree | 13.5 | 16.1 |
-| Correlation with log frequency rank | -0.59 | -0.57 |
+| | Portuguese | Italian | French |
+| --- | --- | --- | --- |
+| Levels | 7, shares 0.2 / 2.1 / 5.4 / 9.1 / 18.7 / 27.2 / 37.3% | 7, shares 1.7 / 3.2 / 5.2 / 7.5 / 13.5 / 25.3 / 43.7% | 14, shares 0.3 / 1.2 / 1.6 / 1.6 / 2.2 / 1.9 / 2.5 / 3.1 / 5.1 / 5.9 / 8.2 / 12.0 / 20.0 / 34.4% |
+| Coverage | 22,293 of 28,623 = 78% | 21,530 of 27,416 = 79% | 27,812 of 28,788 = 97%, 18 of them through a ligature twin |
+| Mean out-degree | 13.9 | 16.2 | 26.1 |
+| Correlation with log frequency rank | -0.60 | -0.57 | -0.66 |
 
 The naive 1-core peel does **not** work on Wiktionary: 61% kernel, empty middle.
 Wiktionary has no controlled defining vocabulary, so the graph is too dense to peel.
@@ -169,11 +171,12 @@ The k-core generalisation is the fix and is what produced the levels above.
 
 ## Pipeline
 
-Run in order from this directory. The first four take a language code, `pt` or `it`, and
-need that language's own Wiktionary extract first:
+Run in order from this directory. The first four take a language code, `pt`, `it` or `fr`,
+and need that language's own Wiktionary extract first:
 
     curl -o wiktextract-pt.jsonl.gz https://kaikki.org/ptwiktionary/raw-wiktextract-data.jsonl.gz   # 36MB
     curl -o wiktextract-it.jsonl.gz https://kaikki.org/itwiktionary/raw-wiktextract-data.jsonl.gz   # 40MB
+    curl -o wiktextract-fr.jsonl.gz https://kaikki.org/frwiktionary/raw-wiktextract-data.jsonl.gz   # 734MB
 
 Each file holds every language its Wiktionary defines, and `build_graph.py` keeps the
 entries in the language itself. The committed Portuguese files are built with the phrase
@@ -190,7 +193,7 @@ which kaikki marks deprecated:
 | --- | --- |
 | `pipeline/build_graph.py <lang>` | Parse glosses, resolve tokens through `forms.<lang>.json`, write `<lang>_graph.json` |
 | `pipeline/kcore.py <lang>` | Out-degree core decomposition -> `<lang>_core.json` |
-| `pipeline/emit_artifact.py <lang>` | Write `defining.<lang>.json` into word-bands. Refuses any number of levels but seven |
+| `pipeline/emit_artifact.py <lang>` | Write `defining.<lang>.json` into word-bands, one base-36 digit per word |
 | `pipeline/analyse.py <lang>` | Correlation with frequency, frequency-controlled samples |
 | `pipeline/gap.py` | Split the no-level words by cause |
 | `pipeline/peel_pt.py` | The naive 1-core peel, kept to show why it fails |
@@ -217,16 +220,37 @@ and D5. `ciao` is A1 vocabulary at D7, like `olá`.
 | An elided word is split off and spelled out | The tokenizer reads `dell'acqua` as one word. Whole, it resolves to nothing, and both `della` and `acqua` lose the link. Splitting adds 3.5% more links in Italian |
 | Link labels are cut out of the definition | The Italian extract leaves `( approfondimento)` and `( citazioni)` inside 25 definitions. Kept, they raise five words a level each |
 
-The app shows exactly seven levels, so a language whose graph peels into another number
-does not fit it. `emit_artifact.py` refuses one. On the September 2026 extracts:
+## French
 
-| Language | Levels |
+The same method, run on the French Wiktionary. It peels into 14 levels, and 97% of the
+list has one, the most of the six. Among the words ranked 2,000-6,000, D1 is again the
+vocabulary of writing definitions (`phrase` `marquer` `usage` `employer` `désigner`) and
+D14 holds words no definition uses (`démissionner` `grand-chose` `pisser`). `comparer` and
+`boue` are each used in 26 definitions, sit at ranks 3,046 and 3,342, and finish at D4 and
+D12. `allô` is A1 vocabulary at D14, like `olá` and `ciao`.
+
+French needs two details of its own:
+
+| Detail | Why |
 | --- | --- |
-| Portuguese, Italian | 7 |
-| Spanish | 11 |
-| French | 14 |
-| English | 20 |
-| German | 5 |
+| An elided word is split off and spelled out, as in Italian | `l'eau` and `qu'il` would otherwise lose `le` and `que`. It adds 1% more links and keeps 14 levels |
+| A word spelled without the ligature takes its twin's level | The word list holds 21 words in both spellings, `coeur` and `cœur`, and the dictionary writes only `cœur`. `emit_artifact.py` gives `coeur` the level of `cœur`. Without it 18 words have no level, `oeil` at rank 257 and `coeur` at 505 among them |
+
+## How many levels
+
+A level is one round of the peel, and a dictionary whose definitions use more words peels
+further. So each language has its own count, and the app reads it off the artifact.
+`emit_artifact.py` writes one base-36 digit per word, so D10 and past still take one
+character. On the September 2026 extracts:
+
+| Language | Levels | Mean out-degree |
+| --- | --- | --- |
+| German | 5 | 10.7 |
+| Portuguese | 7 | 13.9 |
+| Italian | 7 | 16.2 |
+| Spanish | 11 | 23.6 |
+| French | 14 | 26.1 |
+| English | 20 | 30.2 |
 
 ## What this says about the word list
 

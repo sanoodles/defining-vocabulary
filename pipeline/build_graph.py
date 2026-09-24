@@ -18,6 +18,8 @@ ELIDED={
           "quell":"quella","tutt":"tutto","dov":"dove","com":"come","anch":"anche","qual":"quale",
           "po":"poco","nessun":"nessuna","buon":"buona","grand":"grande","sant":"santo","bell":"bella",
           "cos":"cosa"},
+    "fr":{"l":"le","d":"de","j":"je","m":"me","t":"te","s":"se","n":"ne","c":"ce","qu":"que",
+          "jusqu":"jusque","lorsqu":"lorsque","puisqu":"puisque","quoiqu":"quoique"},
 }.get(lang,{})
 # Link labels the Italian extract leaves inside a definition: "casa ( approfondimento)".
 LINKS={"it":re.compile(r"\(\s*(?:approfondimento|citazioni)\s*\)")}.get(lang)
