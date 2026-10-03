@@ -73,7 +73,11 @@ the same thing:
 An edge `u -> v` means *u appears in v's definition*. A word's level is its out-degree
 core number: the largest k for which it still helps define k words that themselves
 survive at k. D1 = core 6 = the core the dictionary explains everything else with.
-D7 = core 0 = never used in any definition.
+D7 = core 0 = never used to define a word outside D7.
+
+Most D7 words appear in no definition at all. The other 23% appear only in definitions of
+other D7 words. The bottom level of Italian, French and Spanish splits the same way: 20–23%
+of its words appear only in definitions of other words at that level.
 
 What the peel finds is an **emergent defining vocabulary** — the uncontrolled-corpus
 analogue of the Longman Defining Vocabulary or Ogden's Basic English, discovered from the
@@ -211,9 +215,9 @@ path in each of the seven — so moving that repo breaks them all until they are
 The same method, run on the Italian Wiktionary. It gives seven levels, as Portuguese does,
 and they separate at constant frequency in the same way. Among the words ranked
 2,000-6,000, D1 is the vocabulary of writing definitions (`definire` `frase` `confrontare`)
-and D7 holds words no definition uses (`sbirro` `gelato` `bussare`). `articolo` and
-`formaggio` are each used in 32 definitions, sit at ranks 1,787 and 1,932, and finish at D1
-and D5. `ciao` is A1 vocabulary at D7, like `olá`.
+and D7 holds words no definition outside D7 uses (`sbirro` `gelato` `bussare`).
+`articolo` and `formaggio` are each used in 32 definitions, sit at ranks 1,787 and 1,932,
+and finish at D1 and D5. `ciao` is A1 vocabulary at D7, like `olá`.
 
 `build_graph.py` needs three details for Italian:
 
@@ -228,9 +232,9 @@ and D5. `ciao` is A1 vocabulary at D7, like `olá`.
 The same method, run on the French Wiktionary. It peels into 14 levels, and 97% of the
 list has one, the most of the six. Among the words ranked 2,000-6,000, D1 is again the
 vocabulary of writing definitions (`phrase` `marquer` `usage` `employer` `désigner`) and
-D14 holds words no definition uses (`démissionner` `grand-chose` `pisser`). `comparer` and
-`boue` are each used in 26 definitions, sit at ranks 3,046 and 3,342, and finish at D4 and
-D12. `allô` is A1 vocabulary at D14, like `olá` and `ciao`.
+D14 holds words no definition outside D14 uses (`démissionner` `grand-chose` `pisser`).
+`comparer` and `boue` are each used in 26 definitions, sit at ranks 3,046 and 3,342, and
+finish at D4 and D12. `allô` is A1 vocabulary at D14, like `olá` and `ciao`.
 
 French needs two details of its own:
 
@@ -244,10 +248,10 @@ French needs two details of its own:
 The same method, run on the Spanish Wiktionary. It peels into 11 levels, and 77% of the
 list has one, as in Portuguese and Italian. Among the words ranked 2,000-6,000, the top is
 again the vocabulary of writing definitions (`determinar` `expresar` at D2, `término`
-`frase` at D3) and D11 holds words no definition uses (`ciertamente` `doler` `sofá`
-`moto`). `correctamente` and `hígado` are each used in 18 definitions, sit at ranks 3,567
-and 3,221, and finish at D4 and D10. `hola` is A1 vocabulary at D11, like `olá`, `ciao`
-and `allô`.
+`frase` at D3) and D11 holds words no definition outside D11 uses (`ciertamente` `doler`
+`sofá` `moto`). `correctamente` and `hígado` are each used in 18 definitions, sit at ranks
+3,567 and 3,221, and finish at D4 and D10. `hola` is A1 vocabulary at D11, like `olá`,
+`ciao` and `allô`.
 
 D2 holds 9 words, the fewest of any level in the four languages: `lo` `al` `otro` `alguno`
 `indicar` `objeto` `u` `determinar` `expresar`.

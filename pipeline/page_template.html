@@ -295,7 +295,7 @@ code{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--surfa
     <h3>How the defining level is worked out</h3>
     <p class="note">The defining level asks a different question: <b>how much of the dictionary leans on
       this word?</b> A word sits high when the dictionary needs it in order to explain other words, and at the
-      bottom when no definition uses it at all.</p>
+      bottom when no word above the bottom level uses it.</p>
     <p class="note">Read every Portuguese Wiktionary definition as a set of links.
       <span lang="pt">água</span> appears in the definition of <span lang="pt">chuva</span>, so there is a link
       <code>água → chuva</code>. Definitions that only name an inflection
@@ -417,7 +417,7 @@ var D=JSON.parse(document.getElementById("data").textContent);
 (function(){
   var WORDS=D.words, C=D.cores, P=D.pos, N=WORDS.length;
   var LV=["D1","D2","D3","D4","D5","D6","D7"];
-  var TAG=["the defining core","","","","","","never used to define"];
+  var TAG=["the defining core","","","","","","unused above D7"];
   var CEFR=[[1000,"A1"],[3000,"A2"],[6000,"B1"],[12000,"B2"],[25000,"C1"],[50000,"C2"]];
   function cefr(r){for(var i=0;i<CEFR.length;i++)if(r<=CEFR[i][0])return CEFR[i][1];return "rare";}
   function lev(i){var c=C[i];return c==="-"?7:6-(+c);}
