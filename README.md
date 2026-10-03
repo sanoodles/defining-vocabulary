@@ -1,8 +1,8 @@
 # Defining vocabulary
 
 The pipeline behind word-bands' third band view, `defining`, alongside `freq` and `cefr`.
-It emits the levels the app ships for Portuguese, Italian and French. The page is a report
-on the Portuguese levels.
+It emits the levels the app ships for Portuguese, Italian, French and Spanish. The page is a
+report on the Portuguese levels.
 
 ## Open this first
 
@@ -155,15 +155,17 @@ Run `pipeline/variants.py` and `pipeline/variantD.py` to reproduce the table.
 | `it_graph.json` | the definitional graph, 21,530 nodes / 349,191 edges |
 | `fr_core.json` | word -> out-degree core number, 27,794 entries |
 | `fr_graph.json` | the definitional graph, 27,794 nodes / 724,469 edges |
+| `es_core.json` | word -> out-degree core number, 24,753 entries |
+| `es_graph.json` | the definitional graph, 24,753 nodes / 583,548 edges |
 
 ## Numbers
 
-| | Portuguese | Italian | French |
-| --- | --- | --- | --- |
-| Levels | 7, shares 0.2 / 2.1 / 5.4 / 9.1 / 18.7 / 27.2 / 37.3% | 7, shares 1.7 / 3.2 / 5.2 / 7.5 / 13.5 / 25.3 / 43.7% | 14, shares 0.3 / 1.2 / 1.6 / 1.6 / 2.2 / 1.9 / 2.5 / 3.1 / 5.1 / 5.9 / 8.2 / 12.0 / 20.0 / 34.4% |
-| Coverage | 22,293 of 28,623 = 78% | 21,530 of 27,416 = 79% | 27,812 of 28,788 = 97%, 18 of them through a ligature twin |
-| Mean out-degree | 13.9 | 16.2 | 26.1 |
-| Correlation with log frequency rank | -0.60 | -0.57 | -0.66 |
+| | Portuguese | Italian | French | Spanish |
+| --- | --- | --- | --- | --- |
+| Levels | 7, shares 0.2 / 2.1 / 5.4 / 9.1 / 18.7 / 27.2 / 37.3% | 7, shares 1.7 / 3.2 / 5.2 / 7.5 / 13.5 / 25.3 / 43.7% | 14, shares 0.3 / 1.2 / 1.6 / 1.6 / 2.2 / 1.9 / 2.5 / 3.1 / 5.1 / 5.9 / 8.2 / 12.0 / 20.0 / 34.4% | 11, shares 0.1 / 0.0 / 2.1 / 2.8 / 3.3 / 3.9 / 5.6 / 8.4 / 13.3 / 21.4 / 39.1% |
+| Coverage | 22,293 of 28,623 = 78% | 21,530 of 27,416 = 79% | 27,812 of 28,788 = 97%, 18 of them through a ligature twin | 24,753 of 32,102 = 77% |
+| Mean out-degree | 13.9 | 16.2 | 26.1 | 23.6 |
+| Correlation with log frequency rank | -0.60 | -0.57 | -0.66 | -0.67 |
 
 The naive 1-core peel does **not** work on Wiktionary: 61% kernel, empty middle.
 Wiktionary has no controlled defining vocabulary, so the graph is too dense to peel.
@@ -171,12 +173,13 @@ The k-core generalisation is the fix and is what produced the levels above.
 
 ## Pipeline
 
-Run in order from this directory. The first four take a language code, `pt`, `it` or `fr`,
-and need that language's own Wiktionary extract first:
+Run in order from this directory. The first four take a language code, `pt`, `it`, `fr` or
+`es`, and need that language's own Wiktionary extract first:
 
     curl -o wiktextract-pt.jsonl.gz https://kaikki.org/ptwiktionary/raw-wiktextract-data.jsonl.gz   # 36MB
     curl -o wiktextract-it.jsonl.gz https://kaikki.org/itwiktionary/raw-wiktextract-data.jsonl.gz   # 40MB
     curl -o wiktextract-fr.jsonl.gz https://kaikki.org/frwiktionary/raw-wiktextract-data.jsonl.gz   # 734MB
+    curl -o wiktextract-es.jsonl.gz https://kaikki.org/eswiktionary/raw-wiktextract-data.jsonl.gz   # 103MB
 
 Each file holds every language its Wiktionary defines, and `build_graph.py` keeps the
 entries in the language itself. The committed Portuguese files are built with the phrase
@@ -236,12 +239,32 @@ French needs two details of its own:
 | An elided word is split off and spelled out, as in Italian | `l'eau` and `qu'il` would otherwise lose `le` and `que`. It adds 1% more links and keeps 14 levels |
 | A word spelled without the ligature takes its twin's level | The word list holds 21 words in both spellings, `coeur` and `cœur`, and the dictionary writes only `cœur`. `emit_artifact.py` gives `coeur` the level of `cœur`. Without it 18 words have no level, `oeil` at rank 257 and `coeur` at 505 among them |
 
+## Spanish
+
+The same method, run on the Spanish Wiktionary. It peels into 11 levels, and 77% of the
+list has one, as in Portuguese and Italian. Among the words ranked 2,000-6,000, the top is
+again the vocabulary of writing definitions (`determinar` `expresar` at D2, `término`
+`frase` at D3) and D11 holds words no definition uses (`ciertamente` `doler` `sofá`
+`moto`). `correctamente` and `hígado` are each used in 18 definitions, sit at ranks 3,567
+and 3,221, and finish at D4 and D10. `hola` is A1 vocabulary at D11, like `olá`, `ciao`
+and `allô`.
+
+D2 holds 9 words, the fewest of any level in the four languages: `lo` `al` `otro` `alguno`
+`indicar` `objeto` `u` `determinar` `expresar`.
+
+Spanish needs two details of its own:
+
+| Detail | Why |
+| --- | --- |
+| Maintenance notes are cut out of the definition | The extract leaves `[cita requerida]` inside 231 definitions and `[definición imprecisa]` inside 51. Kept, they are 466 links, and they hold `cita` two levels above where its own uses put it |
+| A sense number is cut off the word it marks | The Spanish Wiktionary writes `llevar₁` to point at one sense of `llevar`, and the tokenizer reads the digit as a letter, so the word resolves to nothing. 1.9% of definitions carry one. The digits are cut only after a lowercase letter, so `CH₄` stays a formula rather than becoming the junk entry `ch` |
+
 ## How many levels
 
 A level is one round of the peel, and a dictionary whose definitions use more words peels
 further. So each language has its own count, and the app reads it off the artifact.
 `emit_artifact.py` writes one base-36 digit per word, so D10 and past still take one
-character. On the September 2026 extracts:
+character. On the September 2026 extracts, and the October one for Spanish:
 
 | Language | Levels | Mean out-degree |
 | --- | --- | --- |

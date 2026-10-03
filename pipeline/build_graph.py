@@ -21,8 +21,9 @@ ELIDED={
     "fr":{"l":"le","d":"de","j":"je","m":"me","t":"te","s":"se","n":"ne","c":"ce","qu":"que",
           "jusqu":"jusque","lorsqu":"lorsque","puisqu":"puisque","quoiqu":"quoique"},
 }.get(lang,{})
-# Link labels the Italian extract leaves inside a definition: "casa ( approfondimento)".
-LINKS={"it":re.compile(r"\(\s*(?:approfondimento|citazioni)\s*\)")}.get(lang)
+# Text an extract leaves inside a definition: Italian link labels, Spanish notes and sense numbers.
+CUT={"it":re.compile(r"\(\s*(?:approfondimento|citazioni)\s*\)"),
+     "es":re.compile(r"\[(?:cita requerida|definición imprecisa)\]|(?<=[a-zñáéíóúü])[₀-₉]+")}.get(lang)
 TOK=re.compile(r"[^\W\d_]+(?:[-'’][^\W\d_]+)*",re.UNICODE)
 APOS=re.compile(r"['’]")
 def resolve(t):
@@ -31,7 +32,7 @@ def resolve(t):
     b=forms.get(t)
     return b if b and b in index else None
 def words(g):
-    if LINKS: g=LINKS.sub(" ",g)
+    if CUT: g=CUT.sub("",g)
     for t in TOK.findall(g):
         u=resolve(t)
         if u or not APOS.search(t):
