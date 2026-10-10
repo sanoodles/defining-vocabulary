@@ -1,8 +1,8 @@
 # Defining vocabulary
 
 The pipeline behind word-bands' third band view, `defining`, alongside `freq` and `cefr`.
-It emits the levels the app ships for Portuguese, Italian, French, Spanish and German. The
-page is a report on the Portuguese levels.
+It emits the levels the app ships for all six of its languages. The page is a report on the
+Portuguese levels.
 
 ## Open this first
 
@@ -77,7 +77,8 @@ D7 = core 0 = never used to define a word outside D7.
 
 Most D7 words appear in no definition at all. The other 23% appear only in definitions of
 other D7 words. The bottom level of Italian, French, Spanish and German splits the same way:
-20–23% of its words appear only in definitions of other words at that level.
+20–23% of its words appear only in definitions of other words at that level. In English it is
+14% of D20.
 
 What the peel finds is an **emergent defining vocabulary** — the uncontrolled-corpus
 analogue of the Longman Defining Vocabulary or Ogden's Basic English, discovered from the
@@ -163,15 +164,17 @@ Run `pipeline/variants.py` and `pipeline/variantD.py` to reproduce the table.
 | `es_graph.json` | the definitional graph, 24,753 nodes / 583,548 edges |
 | `de_core.json` | word -> out-degree core number, 34,766 entries |
 | `de_graph.json` | the definitional graph, 34,766 nodes / 371,492 edges |
+| `en_core.json` | word -> out-degree core number, 34,626 entries |
+| `en_graph.json` | the definitional graph, 34,626 nodes / 1,046,021 edges |
 
 ## Numbers
 
-| | Portuguese | Italian | French | Spanish | German |
-| --- | --- | --- | --- | --- | --- |
-| Levels | 7, shares 0.2 / 2.1 / 5.4 / 9.1 / 18.7 / 27.2 / 37.3% | 7, shares 1.7 / 3.2 / 5.2 / 7.5 / 13.5 / 25.3 / 43.7% | 14, shares 0.3 / 1.2 / 1.6 / 1.6 / 2.2 / 1.9 / 2.5 / 3.1 / 5.1 / 5.9 / 8.2 / 12.0 / 20.0 / 34.4% | 11, shares 0.1 / 0.0 / 2.1 / 2.8 / 3.3 / 3.9 / 5.6 / 8.4 / 13.3 / 21.4 / 39.1% | 5, shares 1.0 / 4.6 / 8.8 / 21.3 / 64.4% |
-| Coverage | 22,293 of 28,623 = 78% | 21,530 of 27,416 = 79% | 27,812 of 28,788 = 97%, 18 of them through a ligature twin | 24,753 of 32,102 = 77% | 34,766 of 53,517 = 65% |
-| Mean out-degree | 13.9 | 16.2 | 26.1 | 23.6 | 10.7 |
-| Correlation with log frequency rank | -0.60 | -0.57 | -0.66 | -0.67 | -0.57 |
+| | Portuguese | Italian | French | Spanish | German | English |
+| --- | --- | --- | --- | --- | --- | --- |
+| Levels | 7, shares 0.2 / 2.1 / 5.4 / 9.1 / 18.7 / 27.2 / 37.3% | 7, shares 1.7 / 3.2 / 5.2 / 7.5 / 13.5 / 25.3 / 43.7% | 14, shares 0.3 / 1.2 / 1.6 / 1.6 / 2.2 / 1.9 / 2.5 / 3.1 / 5.1 / 5.9 / 8.2 / 12.0 / 20.0 / 34.4% | 11, shares 0.1 / 0.0 / 2.1 / 2.8 / 3.3 / 3.9 / 5.6 / 8.4 / 13.3 / 21.4 / 39.1% | 5, shares 1.0 / 4.6 / 8.8 / 21.3 / 64.4% | 20, shares 2.6 / 0.3 / 0.9 / 0.6 / 1.0 / 0.9 / 1.1 / 0.9 / 1.0 / 1.3 / 1.6 / 1.9 / 2.6 / 3.0 / 4.0 / 5.3 / 6.9 / 10.4 / 17.6 / 36.2% |
+| Coverage | 22,293 of 28,623 = 78% | 21,530 of 27,416 = 79% | 27,812 of 28,788 = 97%, 18 of them through a ligature twin | 24,753 of 32,102 = 77% | 34,766 of 53,517 = 65% | 34,626 of 38,322 = 90% |
+| Mean out-degree | 13.9 | 16.2 | 26.1 | 23.6 | 10.7 | 30.2 |
+| Correlation with log frequency rank | -0.60 | -0.57 | -0.66 | -0.67 | -0.57 | -0.70 |
 
 The naive 1-core peel does **not** work on Wiktionary: 61% kernel, empty middle.
 Wiktionary has no controlled defining vocabulary, so the graph is too dense to peel.
@@ -180,18 +183,21 @@ The k-core generalisation is the fix and is what produced the levels above.
 ## Pipeline
 
 Run in order from this directory. The first four take a language code, `pt`, `it`, `fr`,
-`es` or `de`, and need that language's own Wiktionary extract first:
+`es`, `de` or `en`, and need that language's own Wiktionary extract first:
 
     curl -o wiktextract-pt.jsonl.gz https://kaikki.org/ptwiktionary/raw-wiktextract-data.jsonl.gz   # 36MB
     curl -o wiktextract-it.jsonl.gz https://kaikki.org/itwiktionary/raw-wiktextract-data.jsonl.gz   # 40MB
     curl -o wiktextract-fr.jsonl.gz https://kaikki.org/frwiktionary/raw-wiktextract-data.jsonl.gz   # 734MB
     curl -o wiktextract-es.jsonl.gz https://kaikki.org/eswiktionary/raw-wiktextract-data.jsonl.gz   # 103MB
     curl -o wiktextract-de.jsonl.gz https://kaikki.org/dewiktionary/raw-wiktextract-data.jsonl.gz   # 309MB
+    curl -o wiktextract-en.jsonl.gz https://kaikki.org/dictionary/English/kaikki.org-dictionary-English.jsonl.gz   # 523MB
 
-Each file holds every language its Wiktionary defines, and `build_graph.py` keeps the
-entries in the language itself. The committed Portuguese files are built with the phrase
-list `INFL`, as in `gap.py`, rather than with `form_of`. Rebuilding them with these scripts
-changes the level of 241 words, 1.1% of those with one, and keeps seven levels.
+Each file but the English one holds every language its Wiktionary defines, and
+`build_graph.py` keeps the entries in the language itself. kaikki publishes no raw dump of
+the English edition, since `kaikki.org/enwiktionary/` answers 404, so English takes the file
+of the English edition's English entries. The committed Portuguese files are built with the
+phrase list `INFL`, as in `gap.py`, rather than with `form_of`. Rebuilding them with these
+scripts changes the level of 241 words, 1.1% of those with one, and keeps seven levels.
 
 The other scripts are about the Portuguese page and read kaikki's Portuguese-only file,
 which kaikki marks deprecated:
@@ -256,7 +262,7 @@ again the vocabulary of writing definitions (`determinar` `expresar` at D2, `té
 3,567 and 3,221, and finish at D4 and D10. `hola` is A1 vocabulary at D11, like `olá`,
 `ciao` and `allô`.
 
-D2 holds 9 words, the fewest of any level in the five languages: `lo` `al` `otro` `alguno`
+D2 holds 9 words, the fewest of any level in the six languages: `lo` `al` `otro` `alguno`
 `indicar` `objeto` `u` `determinar` `expresar`.
 
 Spanish needs two details of its own:
@@ -269,7 +275,7 @@ Spanish needs two details of its own:
 ## German
 
 The same method, run on the German Wiktionary. It peels into 5 levels, the fewest of the
-five languages, and 65% of the list has one, the least. Among the words ranked
+six languages, and 65% of the list has one, the least. Among the words ranked
 2,000-6,000, D1 is again the vocabulary of writing definitions (`Bedingung` `Bedeutung`
 `Bereich` `Ereignis`) and D5 holds words no definition outside D5 uses (`erwischen`
 `Champagner` `schief`). `Satz` and `extrem` are each used in 71 definitions, sit at ranks
@@ -280,16 +286,33 @@ Both numbers come from the inputs, not from the method:
 
 | Detail | Why |
 | --- | --- |
-| 5 levels, with 64% of the words that have one in D5 | German definitions link the fewest words, 10.7 a word against 13.9 to 26.1 in the other four. A sparser graph runs out of rounds sooner |
+| 5 levels, with 64% of the words that have one in D5 | German definitions link the fewest words, 10.7 a word against 13.9 to 30.2 in the other five. A sparser graph runs out of rounds sooner |
 | 65% of the list has a level | 11,294 of the 18,751 words without one are entries in word-bands' list that the German Wiktionary files only as forms of another word, and a form defines nothing. The lemma list makes `gesagt` a headword of its own, and does not list `komm` or `musst` at all. Portuguese, Italian and Spanish have 818 to 1,380 such words. Nearly all the rest have no entry: names, English, and compounds such as `Schneemaschine`. The gap sits in C2 and past it, where 56% and 45% have a level. A1 to B2 run 92, 87, 84 and 78%, close to Italian |
 | Nothing is cut out of the definitions | The German Wiktionary points a definition at a sense of its own headword with `[1]` or `^([1])`. The mark holds no word, and a headword written beside it is a self-link, which the graph drops |
+
+## English
+
+The same method, run on the English Wiktionary. It peels into 20 levels, the most of the six,
+and 90% of the list has one. Among the words ranked 2,000-6,000, D1 holds words definitions
+reach for (`manner` `range` `exchange` `proceed`) and D20 holds words no definition outside
+D20 uses (`mum` `motel` `gimme`). `resolve` and `cape` are each used in 58 definitions, sit at
+ranks 3,864 and 3,920, and finish at D1 and D13. `tomorrow` is A1 vocabulary at D20, like
+`olá`, `ciao`, `allô`, `hola` and `hallo`. `hello` is not at the bottom: the English
+Wiktionary defines `hey`, `hiya` and `aloha` with it, so it sits at D17.
+
+| Detail | Why |
+| --- | --- |
+| 20 levels | English definitions link the most words, 30.2 a word against 10.7 to 26.1 in the other five. A denser graph lasts more rounds |
+| The levels follow frequency the most of the six | The correlation with log frequency rank is -0.70, against -0.57 to -0.67 elsewhere |
+| Nothing is cut out of the definitions | Splitting a word at its apostrophe adds 0.3% of the links, nearly all of them a possessive's head: `one's` gives `one`. Contractions such as `don't` are too rare in definitions to matter |
 
 ## How many levels
 
 A level is one round of the peel, and a dictionary whose definitions use more words peels
 further. So each language has its own count, and the app reads it off the artifact.
 `emit_artifact.py` writes one base-36 digit per word, so D10 and past still take one
-character. On the September 2026 extracts, and the October ones for Spanish and German:
+character. On the September 2026 extracts, and the October ones for Spanish, German and
+English:
 
 | Language | Levels | Mean out-degree |
 | --- | --- | --- |
