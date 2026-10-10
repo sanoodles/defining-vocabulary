@@ -1,6 +1,6 @@
 import json, re, collections
-W="/home/itf/repos/word-bands/apps/web/data"
-index={w.lower():i+1 for i,w in enumerate(json.load(open(f"{W}/word-bands.pt.json"))["ranked"])}
+W="/home/itf/repos/wordbands/apps/web/data"
+index={w.lower():i+1 for i,w in enumerate(json.load(open(f"{W}/wordbands.pt.json"))["ranked"])}
 nolevel=set(json.load(open("pt_peel.json"))["no_level"])
 INFL=re.compile(r"\b(primeira|segunda|terceira) pessoa\b|\b(feminino|masculino|plural|singular) de\b"
                 r"|\bpartic[ií]pio\b|\bger[uú]ndio\b|\bflex[aã]o\b|\bforma (feminina|masculina|plural|verbal)\b"

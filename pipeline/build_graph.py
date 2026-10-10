@@ -6,8 +6,8 @@ Reads that language's own Wiktionary, wiktextract-<lang>.jsonl.gz, and writes <l
 """
 import json, re, collections, gzip, sys
 lang=sys.argv[1]
-W="/home/itf/repos/word-bands/apps/web/data"
-ranked=json.load(open(f"{W}/word-bands.{lang}.json"))["ranked"]
+W="/home/itf/repos/wordbands/apps/web/data"
+ranked=json.load(open(f"{W}/wordbands.{lang}.json"))["ranked"]
 index={w.lower():i+1 for i,w in enumerate(ranked)}
 forms={k.lower():v.lower() for k,v in json.load(open(f"{W}/forms.{lang}.json")).items()}
 # The word an elision stands for, so dell'acqua reads as della + acqua.

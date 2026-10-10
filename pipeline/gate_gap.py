@@ -1,13 +1,13 @@
-"""What word-bands' filters let through, measured by a second dictionary.
+"""What wordbands' filters let through, measured by a second dictionary.
 
 The lemma list and the Wiktionary extract each flag thousands of ordinary words on their
 own — the lemma list never headwords function words, Wiktionary calls michmech's feminine
 lemmas inflections. Only words neither vouches for are junk. Prints the three tables in
-word-bands' CLAUDE.md, under "Measuring what the gate misses".
+wordbands' CLAUDE.md, under "Measuring what the gate misses".
 """
 import json, re, collections
 
-W = "/home/itf/repos/word-bands/apps/web/data"
+W = "/home/itf/repos/wordbands/apps/web/data"
 GATE, FLOOR = 25000, 1000                      # DICT_GATE, NAME_RANK_FLOOR in build-bands.ts
 WORD_OK = re.compile(r"^[^\W\d_]+(?:[-'’][^\W\d_]+)*$", re.UNICODE)
 

@@ -1,8 +1,8 @@
-"""Write a language's defining levels into word-bands as a committed artifact.
+"""Write a language's defining levels into wordbands as a committed artifact.
 
     python3 pipeline/emit_artifact.py it
 
-The app reads this positionally against `ranked`, so a rebuild of word-bands.<lang>.json
+The app reads this positionally against `ranked`, so a rebuild of wordbands.<lang>.json
 would silently shift every level onto the wrong word. `count` and `digest` are what make
 that failure loud instead: the app's test re-derives both and refuses a mismatch.
 
@@ -14,12 +14,12 @@ still take one character and a language under ten levels reads as plain digits.
 import hashlib, json, pathlib, sys
 
 lang = sys.argv[1]
-W = pathlib.Path("/home/itf/repos/word-bands/apps/web/data")
+W = pathlib.Path("/home/itf/repos/wordbands/apps/web/data")
 DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
-ranked = json.load(open(W / f"word-bands.{lang}.json"))["ranked"]
+ranked = json.load(open(W / f"wordbands.{lang}.json"))["ranked"]
 rank = json.load(open(f"{lang}_graph.json"))["rank"]
 assert rank == {w.lower(): i + 1 for i, w in enumerate(ranked)}, \
-    f"{lang}_graph.json is not built against this word-bands.{lang}.json"
+    f"{lang}_graph.json is not built against this wordbands.{lang}.json"
 core = json.load(open(f"{lang}_core.json"))
 n = max(core.values()) + 1
 assert n < len(DIGITS), f"{lang} peels into {n} levels, more than one digit holds"

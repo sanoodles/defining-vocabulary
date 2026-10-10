@@ -1,6 +1,6 @@
 # Defining vocabulary
 
-The pipeline behind word-bands' third band view, `defining`, alongside `freq` and `cefr`.
+The pipeline behind wordbands' third band view, `defining`, alongside `freq` and `cefr`.
 It emits the levels the app ships for all six of its languages. The page is a report on the
 Portuguese levels.
 
@@ -209,14 +209,14 @@ which kaikki marks deprecated:
 | --- | --- |
 | `pipeline/build_graph.py <lang>` | Parse glosses, resolve tokens through `forms.<lang>.json`, write `<lang>_graph.json` |
 | `pipeline/kcore.py <lang>` | Out-degree core decomposition -> `<lang>_core.json` |
-| `pipeline/emit_artifact.py <lang>` | Write `defining.<lang>.json` into word-bands, one base-36 digit per word |
+| `pipeline/emit_artifact.py <lang>` | Write `defining.<lang>.json` into wordbands, one base-36 digit per word |
 | `pipeline/analyse.py <lang>` | Correlation with frequency, frequency-controlled samples |
 | `pipeline/gap.py` | Split the no-level words by cause |
 | `pipeline/peel_pt.py` | The naive 1-core peel, kept to show why it fails |
 | `pipeline/peel2.py` | The toy dictionary demo of peeling and its traps |
-| `pipeline/gate_gap.py` | What word-bands' filters let through, crossed with this extract. Needs no `pt.jsonl` |
+| `pipeline/gate_gap.py` | What wordbands' filters let through, crossed with this extract. Needs no `pt.jsonl` |
 
-Paths inside the scripts point at `apps/web/data/` in the word-bands repo, as an absolute
+Paths inside the scripts point at `apps/web/data/` in the wordbands repo, as an absolute
 path in each of the seven — so moving that repo breaks them all until they are repointed.
 
 ## Italian
@@ -287,7 +287,7 @@ Both numbers come from the inputs, not from the method:
 | Detail | Why |
 | --- | --- |
 | 5 levels, with 64% of the words that have one in D5 | German definitions link the fewest words, 10.7 a word against 13.9 to 30.2 in the other five. A sparser graph runs out of rounds sooner |
-| 65% of the list has a level | 11,294 of the 18,751 words without one are entries in word-bands' list that the German Wiktionary files only as forms of another word, and a form defines nothing. The lemma list makes `gesagt` a headword of its own, and does not list `komm` or `musst` at all. Portuguese, Italian and Spanish have 818 to 1,380 such words. Nearly all the rest have no entry: names, English, and compounds such as `Schneemaschine`. The gap sits in C2 and past it, where 56% and 45% have a level. A1 to B2 run 92, 87, 84 and 78%, close to Italian |
+| 65% of the list has a level | 11,294 of the 18,751 words without one are entries in wordbands' list that the German Wiktionary files only as forms of another word, and a form defines nothing. The lemma list makes `gesagt` a headword of its own, and does not list `komm` or `musst` at all. Portuguese, Italian and Spanish have 818 to 1,380 such words. Nearly all the rest have no entry: names, English, and compounds such as `Schneemaschine`. The gap sits in C2 and past it, where 56% and 45% have a level. A1 to B2 run 92, 87, 84 and 78%, close to Italian |
 | Nothing is cut out of the definitions | The German Wiktionary points a definition at a sense of its own headword with `[1]` or `^([1])`. The mark holds no word, and a headword written beside it is a self-link, which the graph drops |
 
 ## English
@@ -326,7 +326,7 @@ English:
 ## What this says about the word list
 
 Building the graph meant looking every one of the 35,827 Portuguese words up in Wiktionary.
-11,719 of them are not in it at all. That is worth handing back, because word-bands built
+11,719 of them are not in it at all. That is worth handing back, because wordbands built
 the list and nothing had checked its first 25,000 words against a dictionary.
 
 Being absent from one dictionary proves nothing, because each one drops ordinary words for
@@ -335,7 +335,7 @@ its own reasons:
 | Dictionary | Has no entry for | Because |
 | --- | --- | --- |
 | Wiktionary | `boa` `má` `última` `certa` | It files them under `bom`, `mau`, `último`, `certo` |
-| `lemma-pt.txt`, the list word-bands filters with | `que` `de` `com` `se` | It lists only words that inflect |
+| `lemma-pt.txt`, the list wordbands filters with | `que` `de` `com` `se` | It lists only words that inflect |
 
 Being absent from **both** is the signal. 7,565 words are:
 
@@ -346,18 +346,18 @@ Being absent from **both** is the signal. 7,565 words are:
 | Misspellings | `näo` for `não`, `voce` for `você` |
 | Abbreviations | `km` `srta` `fbi` `Mr` `St` |
 
-Every one of the 7,565 sits in the first 25,000 words. word-bands does check a word against
+Every one of the 7,565 sits in the first 25,000 words. wordbands does check a word against
 a dictionary, but only from rank 25,000 onward, and past that rank the count is zero. So the
 check works. It starts too late.
 
-2,704 of them are already listed in `names.txt`, the file word-bands uses to drop personal
+2,704 of them are already listed in `names.txt`, the file wordbands uses to drop personal
 names. The filter had the word in hand and kept it anyway.
 
 Some of the 7,565 are real words: `bem-vindos`, `directamente` and `Iorque` are ordinary
 Portuguese. This is a list to review, not a list to delete.
 
 `pipeline/gate_gap.py` prints all of it, and needs no `pt.jsonl`. The long version is in
-word-bands' `CLAUDE.md`, under "Measuring what the gate misses".
+wordbands' `CLAUDE.md`, under "Measuring what the gate misses".
 
 ## On a phone
 
@@ -471,7 +471,7 @@ and the app is a tool; coupling them costs four things and buys nothing a link d
 | The spec | Every surface in that repo carries a rule ID and a test naming it. This page carries none, and writing rules for a spike's prose is the wrong work |
 
 What belongs in the app is the *feature* this argues for — a `defining` value beside
-`freq` and `cefr`, fed by a column in `word-bands.pt.json`. That shares `bands.ts`, the band
+`freq` and `cefr`, fed by a column in `wordbands.pt.json`. That shares `bands.ts`, the band
 browser and the URL state. This page shares none of it and never has to move.
 
 `render_page.py` writes the deploy into `site/`: `index.html`, its headers, and the
