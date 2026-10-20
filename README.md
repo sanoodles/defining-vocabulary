@@ -195,9 +195,26 @@ Run in order from this directory. The first four take a language code, `pt`, `it
 Each file but the English one holds every language its Wiktionary defines, and
 `build_graph.py` keeps the entries in the language itself. kaikki publishes no raw dump of
 the English edition, since `kaikki.org/enwiktionary/` answers 404, so English takes the file
-of the English edition's English entries. The committed Portuguese files are built with the
-phrase list `INFL`, as in `gap.py`, rather than with `form_of`. Rebuilding them with these
-scripts changes the level of 241 words, 1.1% of those with one, and keeps seven levels.
+of the English edition's English entries. Run on the extracts below, the first three scripts
+rebuild every committed `<lang>_graph.json` and `<lang>_core.json`, and every
+`defining.<lang>.json` in wordbands, exactly. That was checked on 2026-10-20.
+
+kaikki rebuilds each file at the same URL, so a new download is a later dump and moves
+levels. The committed files come from these dumps. Write the new date here when replacing
+one.
+
+| Extract | kaikki built it on | Read from |
+| --- | --- | --- |
+| `wiktextract-pt.jsonl.gz` | 2026-09-22 | The commit that rebuilt Portuguese, `ba3e82a`. The file's gzip header carries no date |
+| `wiktextract-it.jsonl.gz` | 2026-09-16 | The file's gzip header |
+| `wiktextract-fr.jsonl.gz` | 2026-09-23 | The file's gzip header |
+| `wiktextract-es.jsonl.gz` | 2026-10-02 | The file's gzip header |
+| `wiktextract-de.jsonl.gz` | 2026-10-01 | The file's gzip header |
+| `wiktextract-en.jsonl.gz` | 2026-10-03 | The file's gzip header |
+
+The gzip header holds the time kaikki compressed the file. This prints it:
+
+    date -ud @$(od -An -tu4 -j4 -N4 wiktextract-it.jsonl.gz | tr -d ' ') +%F
 
 The other scripts are about the Portuguese page and read kaikki's Portuguese-only file,
 which kaikki marks deprecated:
