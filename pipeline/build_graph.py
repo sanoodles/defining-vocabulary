@@ -4,9 +4,10 @@
 
 Reads that language's own Wiktionary, wiktextract-<lang>.jsonl.gz, and writes <lang>_graph.json.
 """
-import json, re, collections, gzip, sys
+import json, os, re, collections, gzip, sys
 lang=sys.argv[1]
-W="/home/itf/repos/wordbands/apps/web/data"
+# WORDBANDS_DATA points at another checkout's data/, such as a worktree's.
+W=os.environ.get("WORDBANDS_DATA","/home/itf/repos/wordbands/apps/web/data")
 ranked=json.load(open(f"{W}/wordbands.{lang}.json"))["ranked"]
 index={w.lower():i+1 for i,w in enumerate(ranked)}
 forms={k.lower():v.lower() for k,v in json.load(open(f"{W}/forms.{lang}.json")).items()}

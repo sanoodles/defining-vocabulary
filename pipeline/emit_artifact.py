@@ -11,10 +11,11 @@ is read by the app rather than by the pipeline. n is how many levels the graph p
 and it differs by language. D = n - core. Each level is one base-36 digit, so D10 and past
 still take one character and a language under ten levels reads as plain digits.
 """
-import hashlib, json, pathlib, sys
+import hashlib, json, os, pathlib, sys
 
 lang = sys.argv[1]
-W = pathlib.Path("/home/itf/repos/wordbands/apps/web/data")
+# WORDBANDS_DATA points at another checkout's data/, such as a worktree's.
+W = pathlib.Path(os.environ.get("WORDBANDS_DATA", "/home/itf/repos/wordbands/apps/web/data"))
 DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz"
 ranked = json.load(open(W / f"wordbands.{lang}.json"))["ranked"]
 rank = json.load(open(f"{lang}_graph.json"))["rank"]
