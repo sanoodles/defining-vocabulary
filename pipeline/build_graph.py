@@ -52,7 +52,10 @@ for line in gzip.open(f"wiktextract-{lang}.jsonl.gz","rt",encoding="utf-8"):
         for g in (s.get("glosses") or []):
             for u in words(g):
                 if u and u!=w: defof[w].add(u)
-nodes={w for w in defof if defof[w]}
+defined={w for w in defof if defof[w]}
+# A level counts the definitions that use a word, so a word whose own page defines
+# nothing still takes one from them. It adds no link, so no other word's level moves.
+nodes=defined|{u for v in defined for u in defof[v]}
 graph={v:sorted(defof[v]&nodes) for v in nodes}
 json.dump({"graph":graph,"rank":{w:index[w] for w in index}},open(f"{lang}_graph.json","w"))
 E=sum(len(x) for x in graph.values())

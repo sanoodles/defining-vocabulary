@@ -75,9 +75,15 @@ core number: the largest k for which it still helps define k words that themselv
 survive at k. D1 = core 6 = the core the dictionary explains everything else with.
 D7 = core 0 = never used to define a word outside D7.
 
-Most D7 words appear in no definition at all. The other 24% appear only in definitions of
+A level counts the definitions that use a word, not the word's own definition. So a word
+whose own entry defines nothing still has a level when other definitions use it. The Spanish
+Wiktionary's `proliferar` page leaves both its senses empty. The definitions of `hongo`,
+`musgo` and `proliferación` use the word, so it sits at D10. Such a word adds no link to the
+graph. So no other word's level depends on it.
+
+Most D7 words appear in no definition at all. The other 28% appear only in definitions of
 other D7 words. The bottom level of Italian, French, Spanish and German splits the same way:
-21–25% of its words appear only in definitions of other words at that level. In English it is
+21–29% of its words appear only in definitions of other words at that level. In English it is
 17% of D20.
 
 What the peel finds is an **emergent defining vocabulary** — the uncontrolled-corpus
@@ -154,29 +160,29 @@ against whatever list wordbands holds.
 | File | Holds |
 | --- | --- |
 | `pt_levels.json` | `words` (frequency order), `cores` (one char, `-` = no level), `pos` (`c` content / `f` function / `m` metalanguage / `?` no entry) |
-| `pt_core.json` | word -> out-degree core number, 32,750 entries |
+| `pt_core.json` | word -> out-degree core number, 35,271 entries |
 | `pt_peel.json` | the naive 1-core peel: strata, kernel, no-level list |
-| `pt_graph.json` | the definitional graph, 32,750 nodes / 429,758 edges |
+| `pt_graph.json` | the definitional graph, 35,271 nodes / 436,998 edges |
 | `pt_core_content4.json` `pt_core_content3.json` `pt_core_D.json` | the rejected variants, kept for comparison |
-| `it_core.json` | word -> out-degree core number, 33,986 entries |
-| `it_graph.json` | the definitional graph, 33,986 nodes / 498,800 edges |
-| `fr_core.json` | word -> out-degree core number, 47,268 entries |
-| `fr_graph.json` | the definitional graph, 47,268 nodes / 1,021,843 edges |
-| `es_core.json` | word -> out-degree core number, 34,028 entries |
-| `es_graph.json` | the definitional graph, 34,028 nodes / 724,560 edges |
-| `de_core.json` | word -> out-degree core number, 39,093 entries |
-| `de_graph.json` | the definitional graph, 39,093 nodes / 430,903 edges |
-| `en_core.json` | word -> out-degree core number, 48,400 entries |
-| `en_graph.json` | the definitional graph, 48,400 nodes / 1,269,463 edges |
+| `it_core.json` | word -> out-degree core number, 35,429 entries |
+| `it_graph.json` | the definitional graph, 35,429 nodes / 505,820 edges |
+| `fr_core.json` | word -> out-degree core number, 47,634 entries |
+| `fr_graph.json` | the definitional graph, 47,634 nodes / 1,035,091 edges |
+| `es_core.json` | word -> out-degree core number, 36,528 entries |
+| `es_graph.json` | the definitional graph, 36,528 nodes / 734,355 edges |
+| `de_core.json` | word -> out-degree core number, 43,662 entries |
+| `de_graph.json` | the definitional graph, 43,662 nodes / 462,169 edges |
+| `en_core.json` | word -> out-degree core number, 48,870 entries |
+| `en_graph.json` | the definitional graph, 48,870 nodes / 1,275,444 edges |
 
 ## Numbers
 
 | | Portuguese | Italian | French | Spanish | German | English |
 | --- | --- | --- | --- | --- | --- | --- |
-| Levels | 7, shares 0.2 / 1.7 / 3.4 / 6.6 / 14.4 / 25.6 / 48.0% | 7, shares 1.1 / 2.2 / 3.3 / 4.9 / 10.3 / 22.5 / 55.8% | 14, shares 0.2 / 0.7 / 0.9 / 1.0 / 1.3 / 1.2 / 1.5 / 2.1 / 3.0 / 3.8 / 5.5 / 8.9 / 19.9 / 50.1% | 11, shares 0.1 / 0.0 / 1.5 / 2.0 / 2.4 / 2.9 / 4.2 / 6.5 / 11.1 / 21.0 / 48.2% | 5, shares 0.9 / 4.5 / 9.2 / 23.2 / 62.2% | 20, shares 1.9 / 0.2 / 0.7 / 0.4 / 0.8 / 0.6 / 0.8 / 0.6 / 0.8 / 0.9 / 1.1 / 1.4 / 1.9 / 2.3 / 3.0 / 4.1 / 5.9 / 9.6 / 19.3 / 43.5% |
-| Coverage | 32,750 of 44,352 = 74% | 33,986 of 41,422 = 82% | 47,304 of 48,566 = 97%, 36 of them through a ligature twin | 34,028 of 45,314 = 75% | 39,093 of 50,000 = 78% | 48,400 of 50,000 = 97% |
-| Mean out-degree | 13.1 | 14.7 | 21.6 | 21.3 | 11.0 | 26.2 |
-| Correlation with log frequency rank | -0.70 | -0.71 | -0.77 | -0.75 | -0.62 | -0.78 |
+| Levels | 7, shares 0.2 / 1.6 / 3.2 / 6.3 / 14.0 / 27.6 / 47.1% | 7, shares 1.1 / 2.2 / 3.2 / 4.9 / 10.3 / 23.6 / 54.9% | 14, shares 0.2 / 0.7 / 0.9 / 1.0 / 1.3 / 1.2 / 1.5 / 2.1 / 3.0 / 3.8 / 5.6 / 8.9 / 20.0 / 49.9% | 11, shares 0.1 / 0.0 / 1.4 / 1.9 / 2.3 / 2.8 / 4.1 / 6.5 / 11.3 / 22.9 / 46.7% | 5, shares 0.9 / 4.6 / 9.7 / 25.7 / 59.0% | 20, shares 1.9 / 0.2 / 0.7 / 0.4 / 0.7 / 0.6 / 0.8 / 0.6 / 0.8 / 0.9 / 1.1 / 1.4 / 1.9 / 2.3 / 3.0 / 4.1 / 5.9 / 9.6 / 19.7 / 43.3% |
+| Coverage | 35,271 of 44,352 = 80% | 35,429 of 41,422 = 86% | 47,667 of 48,566 = 98%, 33 of them through a ligature twin | 36,528 of 45,314 = 81% | 43,662 of 50,000 = 87% | 48,870 of 50,000 = 98% |
+| Mean out-degree | 12.4 | 14.3 | 21.7 | 20.1 | 10.6 | 26.1 |
+| Correlation with log frequency rank | -0.69 | -0.70 | -0.77 | -0.74 | -0.60 | -0.78 |
 
 The naive 1-core peel does **not** work on Wiktionary: 61% kernel, empty middle.
 Wiktionary has no controlled defining vocabulary, so the graph is too dense to peel.
@@ -261,7 +267,7 @@ and 3,730, and finish at D1 and D5. `ciao` is A1 vocabulary at D7, like `olá`.
 
 ## French
 
-The same method, run on the French Wiktionary. It peels into 14 levels, and 97% of the
+The same method, run on the French Wiktionary. It peels into 14 levels, and 98% of the
 list has one, as in English. Among the words ranked 2,000-6,000, D1 is again the
 vocabulary of writing definitions (`marquer` `employer` `désigner` `verbe`) and
 D14 holds words no definition outside D14 uses (`démissionner` `grand-chose` `pisser`).
@@ -273,11 +279,11 @@ French needs two details of its own:
 | Detail | Why |
 | --- | --- |
 | An elided word is split off and spelled out, as in Italian | `l'eau` and `qu'il` would otherwise lose `le` and `que`. It adds 1% more links and keeps 14 levels |
-| A word spelled without the ligature takes its twin's level | The word list holds 43 words in both spellings, `coeur` and `cœur`, and the dictionary writes only `cœur`. `emit_artifact.py` gives `coeur` the level of `cœur`. Without it 36 words have no level, `oeil` at rank 281 and `coeur` at 613 among them |
+| A word spelled without the ligature takes its twin's level | The word list holds 43 words in both spellings, `coeur` and `cœur`, and the dictionary writes only `cœur`. `emit_artifact.py` gives `coeur` the level of `cœur`. Without it 33 words have no level, `coeur` at rank 613 and `voeu` at 4,564 among them |
 
 ## Spanish
 
-The same method, run on the Spanish Wiktionary. It peels into 11 levels, and 75% of the
+The same method, run on the Spanish Wiktionary. It peels into 11 levels, and 81% of the
 list has one, close to Portuguese. Among the words ranked 2,000-6,000, the top is again the
 vocabulary of writing definitions (`verbo` at D1, `significado` `símbolo` `interpretar` at
 D3) and D11 holds words no definition outside D11 uses (`ciertamente` `doler` `sofá`
@@ -298,7 +304,7 @@ Spanish needs two details of its own:
 ## German
 
 The same method, run on the German Wiktionary. It peels into 5 levels, the fewest of the
-six languages, and 78% of the list has one. Among the words ranked 2,000-6,000, D1 is
+six languages, and 87% of the list has one. Among the words ranked 2,000-6,000, D1 is
 again the vocabulary of writing definitions (`Bezeichnung` `Eigenschaft` `Bestandteil`
 `Merkmal`) and D5 holds words no definition outside D5 uses (`erwischen` `Champagner`
 `schief`). `definiert` and `Furcht` are each used in 27 definitions, sit at ranks 4,172 and
@@ -309,14 +315,14 @@ Both numbers come from the inputs, not from the method:
 
 | Detail | Why |
 | --- | --- |
-| 5 levels, with 62% of the words that have one in D5 | German definitions link the fewest words, 11.0 a word against 13.1 to 26.2 in the other five. A sparser graph runs out of rounds sooner |
-| 78% of the list has a level | 7,604 of the 10,907 words without one are entries in wordbands' list that the German Wiktionary files only as forms of another word, and a form defines nothing. The lemma list makes `gesagt` a headword of its own. Portuguese, Italian and Spanish have 690 to 1,529 such words. Nearly all the rest have no entry: names, English, and compounds such as `Sicherheitssystem`. The share falls with rarity: A1 to C2 run 96, 90, 85, 82, 79 and 74%, close to Italian's 96, 95, 90, 84, 79 and 79% |
+| 5 levels, with 59% of the words that have one in D5 | German definitions link the fewest words, 10.6 a word against 12.4 to 26.1 in the other five. A sparser graph runs out of rounds sooner |
+| 87% of the list has a level | 3,675 of the 6,338 words without one are entries in wordbands' list that the German Wiktionary files only as forms of another word. No definition uses them, and a form defines nothing. The lemma list makes `gerettet` a headword of its own. Portuguese, Italian and Spanish have 441 to 895 such words. Nearly all the rest have no entry: names, English, and compounds such as `Sicherheitssystem`. The share falls with rarity: A1 to C2 run 100, 98, 97, 95, 89 and 82%, close to Italian's 99, 97, 94, 89, 84 and 82% |
 | Nothing is cut out of the definitions | The German Wiktionary points a definition at a sense of its own headword with `[1]` or `^([1])`. The mark holds no word, and a headword written beside it is a self-link, which the graph drops |
 
 ## English
 
 The same method, run on the English Wiktionary. It peels into 20 levels, the most of the six,
-and 97% of the list has one, as in French. Among the words ranked 2,000-6,000, D1 holds words
+and 98% of the list has one, as in French. Among the words ranked 2,000-6,000, D1 holds words
 definitions reach for (`manner` `proceed` `instance` `circumstance`) and D20 holds words no
 definition outside D20 uses (`mum` `grandma` `gimme`). `resolve` and `bark` are each used in
 66 definitions, sit at ranks 2,953 and 3,575, and finish at D1 and D13. `tomorrow` is A1
@@ -325,8 +331,8 @@ bottom: the English Wiktionary defines `hey`, `hiya` and `aloha` with it, so it 
 
 | Detail | Why |
 | --- | --- |
-| 20 levels | English definitions link the most words, 26.2 a word against 11.0 to 21.6 in the other five. A denser graph lasts more rounds |
-| The levels follow frequency the most of the six | The correlation with log frequency rank is -0.78, against -0.62 to -0.77 elsewhere |
+| 20 levels | English definitions link the most words, 26.1 a word against 10.6 to 21.7 in the other five. A denser graph lasts more rounds |
+| The levels follow frequency the most of the six | The correlation with log frequency rank is -0.78, against -0.60 to -0.77 elsewhere |
 | Nothing is cut out of the definitions | Splitting a word at its apostrophe adds 0.3% of the links, nearly all of them a possessive's head: `one's` gives `one`. Contractions such as `don't` are too rare in definitions to matter |
 
 ## How many levels
@@ -339,12 +345,12 @@ English:
 
 | Language | Levels | Mean out-degree |
 | --- | --- | --- |
-| German | 5 | 11.0 |
-| Portuguese | 7 | 13.1 |
-| Italian | 7 | 14.7 |
-| Spanish | 11 | 21.3 |
-| French | 14 | 21.6 |
-| English | 20 | 26.2 |
+| German | 5 | 10.6 |
+| Portuguese | 7 | 12.4 |
+| Italian | 7 | 14.3 |
+| Spanish | 11 | 20.1 |
+| French | 14 | 21.7 |
+| English | 20 | 26.1 |
 
 ## What this says about the word list
 
